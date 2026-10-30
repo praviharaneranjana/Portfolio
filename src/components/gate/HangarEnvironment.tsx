@@ -1,154 +1,123 @@
 "use client";
 
-import { useMemo, useRef } from "react";
-import { useFrame } from "@react-three/fiber";
-import { MathUtils, Vector3, type Points, type MeshStandardMaterial } from "three";
+import { useMemo } from "react";
 
 type HangarProps = {
   inAccessZone: boolean;
 };
 
 export function HangarEnvironment({ inAccessZone }: HangarProps) {
-  const terminalGlow = useRef<MeshStandardMaterial>(null);
-  const particlesRef = useRef<Points>(null);
+  // Materials for realistic military/industrial installation
+  const concreteMat = useMemo(
+    () => ({
+      color: "#0f1114",
+      roughness: 0.82,
+      metalness: 0.18,
+    }),
+    [],
+  );
 
-  // Atmospheric dust / sparks floating in the hangar
-  const particleCount = 120;
-  const [positions, speeds] = useMemo(() => {
-    const pos = new Float32Array(particleCount * 3);
-    const spd = new Float32Array(particleCount);
-    for (let i = 0; i < particleCount; i++) {
-      pos[i * 3 + 0] = (Math.random() - 0.5) * 14;
-      pos[i * 3 + 1] = -2.6 + Math.random() * 4.5;
-      pos[i * 3 + 2] = -2 + Math.random() * 20;
-      spd[i] = 0.2 + Math.random() * 0.4;
-    }
-    return [pos, spd];
-  }, []);
+  const steelRailMat = useMemo(
+    () => ({
+      color: "#2b2e36",
+      roughness: 0.42,
+      metalness: 0.85,
+    }),
+    [],
+  );
 
-  useFrame((state, delta) => {
-    // Pulse terminal console glow when in access zone
-    if (terminalGlow.current) {
-      const targetIntensity = inAccessZone ? 3.5 + Math.sin(state.clock.elapsedTime * 8) * 1.5 : 0.8;
-      terminalGlow.current.emissiveIntensity = MathUtils.lerp(
-        terminalGlow.current.emissiveIntensity,
-        targetIntensity,
-        delta * 6,
-      );
-    }
+  const hazardMat = useMemo(
+    () => ({
+      color: inAccessZone ? "#38bdf8" : "#d97706",
+      roughness: 0.6,
+      metalness: 0.1,
+    }),
+    [inAccessZone],
+  );
 
-    // Drift particles gently
-    if (particlesRef.current) {
-      const array = particlesRef.current.geometry.attributes.position.array as Float32Array;
-      for (let i = 0; i < particleCount; i++) {
-        array[i * 3 + 1] += speeds[i] * delta * 0.4;
-        if (array[i * 3 + 1] > 2.5) {
-          array[i * 3 + 1] = -2.6;
-        }
-      }
-      particlesRef.current.geometry.attributes.position.needsUpdate = true;
-    }
-  });
+  const terminalMat = useMemo(
+    () => ({
+      color: "#181a1f",
+      roughness: 0.45,
+      metalness: 0.85,
+    }),
+    [],
+  );
 
   return (
     <group position={[0, 0, 0]}>
-      {/* Main Tactical Hangar Floor */}
+      {/* Heavy Industrial Concrete Hangar Floor */}
       <mesh position={[0, -2.65, 8]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[14, 26]} />
-        <meshStandardMaterial
-          color="#0c0d10"
-          metalness={0.75}
-          roughness={0.35}
-        />
+        <planeGeometry args={[16, 26]} />
+        <meshStandardMaterial {...concreteMat} />
       </mesh>
 
-      {/* Runway Guide Strips towards Gate */}
-      <mesh position={[0, -2.645, 8]} rotation={[-Math.PI / 2, 0, 0]}>
+      {/* Recessed Steel Guide Tracks on Floor */}
+      <mesh position={[-2.2, -2.645, 8]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[0.08, 22]} />
-        <meshBasicMaterial color="#ff4d30" opacity={0.35} transparent />
+        <meshStandardMaterial {...steelRailMat} />
       </mesh>
-      <mesh position={[-2.4, -2.645, 8]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[0.04, 22]} />
-        <meshBasicMaterial color="#ffffff" opacity={0.12} transparent />
-      </mesh>
-      <mesh position={[2.4, -2.645, 8]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[0.04, 22]} />
-        <meshBasicMaterial color="#ffffff" opacity={0.12} transparent />
+      <mesh position={[2.2, -2.645, 8]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[0.08, 22]} />
+        <meshStandardMaterial {...steelRailMat} />
       </mesh>
 
-      {/* Access / Interaction Zone Marker on Floor (Yellow / Cyan Hazard Grid) */}
-      <group position={[0, -2.64, 3.2]}>
-        {/* Outer boundary ring */}
+      {/* Weathered Tactical Stencil Runway Markers */}
+      {[-8, -4, 0, 4, 8, 12].map((z) => (
+        <mesh key={z} position={[0, -2.646, z]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[0.15, 1.2]} />
+          <meshBasicMaterial color="#ffffff" opacity={0.12} transparent />
+        </mesh>
+      ))}
+
+      {/* Tactical Access Zone Stenciled Markings */}
+      <group position={[0, -2.644, 3.2]}>
+        {/* Outer Rectangular Safety Perimeter */}
         <mesh rotation={[-Math.PI / 2, 0, 0]}>
           <ringGeometry args={[1.8, 1.86, 32]} />
-          <meshBasicMaterial color={inAccessZone ? "#00f0ff" : "#ff4d30"} opacity={inAccessZone ? 0.8 : 0.25} transparent />
-        </mesh>
-        {/* Subtle inner pulsation */}
-        <mesh rotation={[-Math.PI / 2, 0, 0]}>
-          <circleGeometry args={[1.78, 32]} />
-          <meshBasicMaterial color={inAccessZone ? "#00f0ff" : "#ff4d30"} opacity={inAccessZone ? 0.08 : 0.02} transparent />
+          <meshBasicMaterial color={hazardMat.color} opacity={inAccessZone ? 0.65 : 0.25} transparent />
         </mesh>
       </group>
 
-      {/* Tactical Access Terminal Console on the right of the gate */}
+      {/* Heavy Industrial Security Console Terminal on right side */}
       <group position={[2.8, -2.1, 1.8]}>
-        <mesh position={[0, 0, 0]} castShadow>
-          <boxGeometry args={[0.35, 1.1, 0.35]} />
-          <meshStandardMaterial color="#1a1c22" metalness={0.9} roughness={0.3} />
+        {/* Terminal Pedestal */}
+        <mesh position={[0, 0, 0]} castShadow receiveShadow>
+          <boxGeometry args={[0.38, 1.1, 0.38]} />
+          <meshStandardMaterial {...terminalMat} />
         </mesh>
-        {/* Terminal Screen & Hologram Emitter */}
-        <mesh position={[0, 0.45, 0.16]} rotation={[-0.3, 0, 0]}>
-          <boxGeometry args={[0.28, 0.22, 0.04]} />
+        {/* Slanted Display Panel */}
+        <mesh position={[0, 0.46, 0.16]} rotation={[-0.32, 0, 0]}>
+          <boxGeometry args={[0.32, 0.22, 0.04]} />
           <meshStandardMaterial
-            ref={terminalGlow}
-            color="#00f0ff"
-            emissive={inAccessZone ? "#00f0ff" : "#ff4d30"}
-            emissiveIntensity={1.2}
+            color="#0f172a"
+            emissive={inAccessZone ? "#0284c7" : "#0f172a"}
+            emissiveIntensity={inAccessZone ? 0.8 : 0.1}
+            roughness={0.2}
           />
         </mesh>
-        {/* Hologram Pulse Ring */}
-        <mesh position={[0, 0.75, 0.1]} rotation={[-Math.PI / 2, 0, 0]}>
-          <ringGeometry args={[0.15, 0.18, 16]} />
-          <meshBasicMaterial color={inAccessZone ? "#00f0ff" : "#ff4d30"} opacity={inAccessZone ? 0.6 : 0.2} transparent />
-        </mesh>
       </group>
 
-      {/* Side Corridor Boundary Lights / Pylons */}
-      {[-5.2, 5.2].map((x) =>
-        [2, 6, 10, 14].map((z) => (
-          <group key={`${x}-${z}`} position={[x, -2.1, z]}>
-            <mesh>
-              <cylinderGeometry args={[0.06, 0.08, 1.1, 12]} />
-              <meshStandardMaterial color="#22252c" metalness={0.8} roughness={0.3} />
+      {/* Structural Bulkhead Columns along Hangar Perimeter */}
+      {[-5.4, 5.4].map((x) =>
+        [2, 7, 12].map((z) => (
+          <group key={`${x}-${z}`} position={[x, -1.2, z]}>
+            <mesh castShadow receiveShadow>
+              <boxGeometry args={[0.45, 3.2, 0.6]} />
+              <meshStandardMaterial {...concreteMat} />
             </mesh>
-            <mesh position={[0, 0.52, 0]}>
-              <cylinderGeometry args={[0.07, 0.07, 0.06, 12]} />
+            {/* Recessed Wall Sconce Work-Light */}
+            <mesh position={[x > 0 ? -0.24 : 0.24, 0.8, 0]}>
+              <boxGeometry args={[0.06, 0.18, 0.25]} />
               <meshStandardMaterial
-                color="#00f0ff"
-                emissive="#00f0ff"
-                emissiveIntensity={inAccessZone ? 2.5 : 0.8}
+                color="#e2e8f0"
+                emissive="#94a3b8"
+                emissiveIntensity={0.6}
               />
             </mesh>
           </group>
         )),
       )}
-
-      {/* Atmospheric Particles */}
-      <points ref={particlesRef}>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            args={[positions, 3]}
-          />
-        </bufferGeometry>
-        <pointsMaterial
-          size={0.06}
-          color="#00f0ff"
-          transparent
-          opacity={0.35}
-          depthWrite={false}
-        />
-      </points>
     </group>
   );
 }
