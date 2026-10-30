@@ -34,7 +34,12 @@ export const siteConfig = {
     enabled: true,
     count: 3,
     /** Ball radius in CSS pixels. */
-    radius: { desktop: 24, mobile: 15 },
+    radius: { desktop: 24, mobile: 10 },
+    /**
+     * The balls sit on the page without the hero's fog and vignette, so they need a darker, less glossy version of
+     * the pillar material to read as the same object.
+     */
+    material: { color: "#131417", roughness: 0.55, metalness: 0.45, clearcoat: 0.15, envMapIntensity: 0.6 },
   },
 
   /** Intro: a 3D vault gate (built in Blender, see blender/build_gate.py) the visitor unlocks by turning the wheel. */

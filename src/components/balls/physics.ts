@@ -20,6 +20,8 @@ export type Ball = {
   squash: number;
   squashV: number;
   grounded: boolean;
+  /** Falling back in from the top: skips draining floors and lands on the first one it can stay on. */
+  dropping?: boolean;
 };
 
 /** Visible part of the document: scrollY, viewport width and height. */
@@ -40,10 +42,12 @@ export const PHYS = {
   screenMargin: 8,
   /** Impacts slower than this (px/s) settle instead of bouncing. */
   restSpeed: 220,
-  /** Squash spring: stiffness, damping, and how much an impact compresses the ball. */
-  squashK: 320,
-  squashC: 13,
-  squashKick: 0.0045,
+  /** Squash spring: stiffness, damping, and how much an impact compresses the ball. Soft, so it jiggles. */
+  squashK: 240,
+  squashC: 8,
+  squashKick: 0.006,
+  /** Landings faster than this (px/s) squish the ball, even when they don't bounce. */
+  squishSpeed: 40,
   maxSpeed: 2600,
   /** Physics substep (s). */
   dt: 1 / 240,
@@ -53,12 +57,9 @@ function land(b: Ball, y: number) {
   const impact = b.vy;
   b.y = y - b.r;
   b.grounded = true;
-  if (impact > PHYS.restSpeed) {
-    b.vy = -impact * PHYS.restitution;
-    b.squashV += impact * PHYS.squashKick;
-  } else {
-    b.vy = 0;
-  }
+  b.dropping = false;
+  if (impact > PHYS.squishSpeed) b.squashV += Math.max(impact, 180) * PHYS.squashKick;
+  b.vy = impact > PHYS.restSpeed ? -impact * PHYS.restitution : 0;
 }
 
 function collideBalls(a: Ball, b: Ball) {
@@ -101,6 +102,7 @@ function substep(balls: Ball[], floors: Floor[], view: View, dt: number) {
     let support: Floor | null = null;
     let overhang = 0;
     for (const f of floors) {
+      if (b.dropping && f.drain) continue;
       const over = b.x < f.x0 ? f.x0 - b.x : b.x > f.x1 ? b.x - f.x1 : 0;
       if (over > b.r * 0.85) continue;
       if (b.vy >= 0 && prevBottom <= f.y + Math.max(3, b.r * 0.35) && b.y + b.r >= f.y) {
