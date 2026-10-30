@@ -1,56 +1,64 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useLenis } from "lenis/react";
+import { Volume2, VolumeX, ShieldAlert, Radio, Crosshair } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { profile } from "@/content";
 import { gateStore, useGateOpen } from "@/lib/gate";
 import { cn } from "@/lib/utils";
 import type { GateControl } from "./GateCanvas";
+import type { CarInput } from "./RCCar";
+import { sound } from "./sound";
 
-// three.js needs `window`, so the 3D vault is client-only and code-split.
 const GateCanvas = dynamic(() => import("./GateCanvas"), { ssr: false });
 
-const FULL = Math.PI * 2 * siteConfig.gate.turns;
-const FADE_AT = 2100; // ms after unlock: start fading the overlay
-const DONE_AT = 2900; // ms after unlock: remove it and start the hero
+const UNLOCK_ANIMATION_DURATION = 2400; // ms to let the car drive through and doors open
+const FADE_AT = 2000;
 const SESSION_KEY = "gate-unlocked";
-const RING_TICKS = Array.from({ length: 48 }, (_, i) => i);
 
-type Phase = "locked" | "unlocking" | "fading";
+type Phase = "driving" | "bypassing" | "unlocked" | "fading";
 
-/**
- * Full-screen intro: a mechanical vault (modelled in Blender) the visitor unlocks by
- * dragging the wheel through a full turn. Wheel-scroll, arrow keys and "Skip" also work.
- */
 export function IntroGate() {
   const isOpen = useGateOpen();
   if (isOpen) return null;
-  return <Gate />;
+  return <RCGateExperience />;
 }
 
-function Gate() {
-  const [phase, setPhase] = useState<Phase>("locked");
+function RCGateExperience() {
+  const [phase, setPhase] = useState<Phase>("driving");
   const [ready, setReady] = useState(false);
-  const root = useRef<HTMLDivElement>(null);
-  const arc = useRef<SVGCircleElement>(null);
-  const pct = useRef<HTMLSpanElement>(null);
-  const ctrl = useRef<GateControl>({ progress: 0, unlockedAt: null });
-  const drag = useRef<{ angle: number } | null>(null);
-  const turned = useRef(0);
-  const phaseRef = useRef<Phase>("locked");
-  const lenis = useLenis();
+  const [distance, setDistance] = useState<number>(12.5);
+  const [inRange, setInRange] = useState<boolean>(false);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
+  const [hackProgress, setHackProgress] = useState<number>(0);
 
-  // Reduced-motion visitors and repeat visits (if enabled) go straight to the site.
+  // Joystick & Drive controls
+  const inputRef = useRef<CarInput>({ forward: 0, turn: 0 });
+  const keyState = useRef<{ [key: string]: boolean }>({});
+  const joystickBase = useRef<HTMLDivElement>(null);
+  const joystickKnob = useRef<HTMLDivElement>(null);
+  const joystickActive = useRef(false);
+  const joystickTouchId = useRef<number | null>(null);
+
+  const ctrl = useRef<GateControl>({ progress: 0, unlockedAt: null });
+  const phaseRef = useRef<Phase>("driving");
+  const lenis = useLenis();
+  const hadInRange = useRef(false);
+
+  // Reduced-motion visitors and repeat visits
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const seen = siteConfig.gate.oncePerSession && sessionStorage.getItem(SESSION_KEY) === "1";
-    if (reduce || seen) gateStore.open();
-    else window.scrollTo(0, 0);
+    if (reduce || seen) {
+      gateStore.open();
+    } else {
+      window.scrollTo(0, 0);
+    }
   }, []);
 
-  // Freeze page scroll while the gate is up.
+  // Freeze page scroll while gate is up
   useEffect(() => {
     const html = document.documentElement;
     html.style.overflow = "hidden";
@@ -61,210 +69,362 @@ function Gate() {
     };
   }, [lenis]);
 
-  const paint = useCallback((p: number) => {
-    if (arc.current) arc.current.style.strokeDashoffset = String(1 - p);
-    if (pct.current) pct.current.textContent = String(Math.round(p * 100)).padStart(3, "0");
-  }, []);
+  // Keyboard driving controls
+  useEffect(() => {
+    const updateKeys = () => {
+      if (phaseRef.current !== "driving") return;
+      let f = 0;
+      let t = 0;
+      if (keyState.current["w"] || keyState.current["arrowup"]) f += 1;
+      if (keyState.current["s"] || keyState.current["arrowdown"]) f -= 1;
+      if (keyState.current["a"] || keyState.current["arrowleft"]) t -= 1;
+      if (keyState.current["d"] || keyState.current["arrowright"]) t += 1;
 
-  const unlock = useCallback(() => {
-    if (phaseRef.current !== "locked") return;
-    phaseRef.current = "unlocking";
-    turned.current = FULL;
-    ctrl.current.progress = 1;
-    ctrl.current.unlockedAt = performance.now() / 1000;
-    paint(1);
-    setPhase("unlocking");
+      // If joystick is active, joystick takes priority or blends
+      if (!joystickActive.current) {
+        inputRef.current.forward = f;
+        inputRef.current.turn = t;
+      }
+    };
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      const k = e.key.toLowerCase();
+      keyState.current[k] = true;
+      updateKeys();
+
+      // PlayStation Bypass Trigger via Space or E
+      if ((k === " " || k === "e" || k === "enter") && inRange && phaseRef.current === "driving") {
+        e.preventDefault();
+        triggerBypass();
+      } else if (k === "escape") {
+        skipIntro();
+      }
+    };
+
+    const onKeyUp = (e: KeyboardEvent) => {
+      keyState.current[e.key.toLowerCase()] = false;
+      updateKeys();
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("keyup", onKeyUp);
+    };
+  }, [inRange]);
+
+  // Toggle sound
+  const toggleSound = () => {
+    const next = !soundEnabled;
+    setSoundEnabled(next);
+    sound.setSoundEnabled(next);
+  };
+
+  // Skip straight to site
+  const skipIntro = () => {
+    sound.stopAll();
+    phaseRef.current = "fading";
+    setPhase("fading");
     try {
       sessionStorage.setItem(SESSION_KEY, "1");
-    } catch {
-      // storage blocked (private mode) — the gate simply shows again next time
-    }
-    window.setTimeout(() => {
-      phaseRef.current = "fading";
-      setPhase("fading");
-    }, FADE_AT);
-    window.setTimeout(() => gateStore.open(), DONE_AT);
-  }, [paint]);
-
-  const advance = useCallback(
-    (delta: number) => {
-      if (phaseRef.current !== "locked") return;
-      turned.current = Math.min(Math.max(turned.current + delta, 0), FULL);
-      ctrl.current.progress = turned.current / FULL;
-      paint(ctrl.current.progress);
-      if (turned.current >= FULL) unlock();
-    },
-    [paint, unlock],
-  );
-
-  // Keyboard + mouse wheel alternatives to dragging.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (["ArrowRight", "ArrowDown", "Enter", " "].includes(e.key)) {
-        e.preventDefault();
-        advance(FULL / 8);
-      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") advance(-FULL / 8);
-      else if (e.key === "Escape") unlock();
-    };
-    const onWheel = (e: WheelEvent) => advance(Math.max(-0.4, Math.min(0.4, e.deltaY * 0.004)));
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("wheel", onWheel, { passive: true });
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("wheel", onWheel);
-    };
-  }, [advance, unlock]);
-
-  // Angle of the pointer around the wheel (screen centre). Screen Y points down, so clockwise is positive.
-  const angleOf = (e: ReactPointerEvent) => {
-    const dx = e.clientX - window.innerWidth / 2;
-    const dy = e.clientY - window.innerHeight / 2;
-    return { angle: Math.atan2(dy, dx), dist: Math.hypot(dx, dy) };
+    } catch {}
+    gateStore.open();
   };
 
-  const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
-    if ((e.target as Element).closest("button")) return;
-    e.currentTarget.setPointerCapture(e.pointerId);
-    drag.current = { angle: angleOf(e).angle };
-    root.current?.setAttribute("data-dragging", "");
-  };
+  // Trigger PlayStation-style door bypass
+  const triggerBypass = useCallback(() => {
+    if (phaseRef.current !== "driving") return;
+    phaseRef.current = "bypassing";
+    setPhase("bypassing");
+    sound.playHackBypass();
 
-  const onPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
-    if (!drag.current) return;
-    const { angle, dist } = angleOf(e);
-    let d = angle - drag.current.angle;
-    if (d > Math.PI) d -= Math.PI * 2;
-    if (d < -Math.PI) d += Math.PI * 2;
-    drag.current.angle = angle;
-    if (dist > 18) advance(d); // the angle is unstable right at the centre
-  };
+    // Hacking progress bar animation
+    let p = 0;
+    const interval = setInterval(() => {
+      p += 0.2;
+      setHackProgress(Math.min(1, p));
+      if (p >= 1) {
+        clearInterval(interval);
+        // Gate unlatches and opens
+        phaseRef.current = "unlocked";
+        setPhase("unlocked");
+        ctrl.current.progress = 1;
+        ctrl.current.unlockedAt = performance.now() / 1000;
 
-  const endDrag = () => {
-    drag.current = null;
-    root.current?.removeAttribute("data-dragging");
-  };
+        try {
+          sessionStorage.setItem(SESSION_KEY, "1");
+        } catch {}
 
-  const onDialRadius = useCallback((px: number) => {
-    root.current?.style.setProperty("--dial-r", `${Math.max(px, 70)}px`);
+        // Fade overlay and open dashboard
+        window.setTimeout(() => {
+          phaseRef.current = "fading";
+          setPhase("fading");
+        }, FADE_AT);
+
+        window.setTimeout(() => {
+          sound.stopAll();
+          gateStore.open();
+        }, UNLOCK_ANIMATION_DURATION);
+      }
+    }, 80);
   }, []);
-  const onReady = useCallback(() => setReady(true), []);
 
-  const status = !ready
-    ? "Initialising vault"
-    : phase === "locked"
-      ? "Drag in a circle to turn the wheel"
-      : "Access granted";
+  // Distance & Range update from 3D Canvas
+  const handleDistanceUpdate = useCallback((dist: number, withinRange: boolean) => {
+    setDistance(dist);
+    setInRange(withinRange);
+
+    if (withinRange && !hadInRange.current) {
+      hadInRange.current = true;
+      sound.playPromptAppear();
+    } else if (!withinRange && hadInRange.current) {
+      hadInRange.current = false;
+    }
+  }, []);
+
+  // Virtual Joystick Pointer Handlers
+  const handleJoystickMove = (clientX: number, clientY: number) => {
+    if (!joystickBase.current || !joystickKnob.current) return;
+    const rect = joystickBase.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const maxRadius = rect.width / 2;
+
+    const dx = clientX - centerX;
+    const dy = clientY - centerY;
+    const dist = Math.hypot(dx, dy);
+    const angle = Math.atan2(dy, dx);
+
+    const clampedDist = Math.min(dist, maxRadius);
+    const knobX = Math.cos(angle) * clampedDist;
+    const knobY = Math.sin(angle) * clampedDist;
+
+    joystickKnob.current.style.transform = `translate(${knobX}px, ${knobY}px)`;
+
+    // Convert to Car Inputs: forward (-dy / maxRadius), turn (dx / maxRadius)
+    const normX = knobX / maxRadius;
+    const normY = knobY / maxRadius;
+
+    inputRef.current.forward = -normY;
+    inputRef.current.turn = normX;
+  };
+
+  const handleJoystickStart = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    joystickActive.current = true;
+    joystickTouchId.current = e.pointerId;
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    handleJoystickMove(e.clientX, e.clientY);
+  };
+
+  const handleJoystickPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!joystickActive.current || e.pointerId !== joystickTouchId.current) return;
+    handleJoystickMove(e.clientX, e.clientY);
+  };
+
+  const handleJoystickEnd = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerId !== joystickTouchId.current) return;
+    joystickActive.current = false;
+    joystickTouchId.current = null;
+    if (joystickKnob.current) {
+      joystickKnob.current.style.transform = "translate(0px, 0px)";
+    }
+    inputRef.current.forward = 0;
+    inputRef.current.turn = 0;
+  };
 
   return (
     <div
-      ref={root}
       id="intro-gate"
       role="dialog"
       aria-modal="true"
-      aria-label="Intro — turn the vault wheel to enter the site"
-      data-cursor
+      aria-label="Intro — Drive RC Car to bypass the vault gate"
       className={cn(
-        "group/gate fixed inset-0 z-[90] touch-none bg-background select-none",
-        "transition-opacity duration-700 ease-out-expo",
+        "fixed inset-0 z-[90] touch-none bg-background select-none overflow-hidden",
+        "transition-opacity duration-700 ease-out",
         phase === "fading" && "pointer-events-none opacity-0",
       )}
-      style={{ "--dial-r": "160px" } as CSSProperties}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={endDrag}
-      onPointerCancel={endDrag}
     >
       <noscript>
         <style>{`#intro-gate{display:none}`}</style>
       </noscript>
 
+      {/* 3D R3F Canvas */}
       <div className={cn("absolute inset-0 transition-opacity duration-1000", ready ? "opacity-100" : "opacity-0")}>
-        <GateCanvas ctrl={ctrl} onReady={onReady} onDialRadius={onDialRadius} />
-      </div>
-
-      {/* Progress ring, laid over the lock ring of the 3D wheel */}
-      <svg
-        aria-hidden
-        viewBox="-1.2 -1.2 2.4 2.4"
-        className={cn(
-          "pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-700",
-          ready && phase === "locked" ? "opacity-100" : "opacity-0",
-        )}
-        style={{ width: "calc(var(--dial-r) * 2.4)", height: "calc(var(--dial-r) * 2.4)" }}
-      >
-        <g className="origin-center animate-spin-slow">
-          {RING_TICKS.map((i) => (
-            <line
-              key={i}
-              x1="0"
-              y1={i % 4 === 0 ? -1.13 : -1.11}
-              x2="0"
-              y2="-1.07"
-              stroke="white"
-              strokeOpacity={i % 4 === 0 ? 0.35 : 0.12}
-              strokeWidth="0.008"
-              transform={`rotate(${i * 7.5})`}
-            />
-          ))}
-        </g>
-        <circle r="1.02" fill="none" stroke="white" strokeOpacity="0.08" strokeWidth="0.012" />
-        <circle
-          ref={arc}
-          r="1.02"
-          fill="none"
-          stroke="var(--accent)"
-          strokeWidth="0.022"
-          strokeLinecap="round"
-          pathLength={1}
-          strokeDasharray="1"
-          strokeDashoffset="1"
-          transform="rotate(-90)"
-          style={{ filter: "drop-shadow(0 0 0.04px var(--accent))" }}
+        <GateCanvas
+          ctrl={ctrl}
+          inputRef={inputRef}
+          onDistanceUpdate={handleDistanceUpdate}
+          isBypassing={phase === "bypassing"}
+          isUnlocked={phase === "unlocked"}
+          onReady={() => setReady(true)}
         />
-        {/* Circular-motion hint */}
-        <g className="origin-center animate-[spin_3.2s_linear_infinite] group-data-[dragging]/gate:opacity-0">
-          <path d="M 0 -1.02 A 1.02 1.02 0 0 1 0.72 -0.72" fill="none" stroke="white" strokeOpacity="0.5" strokeWidth="0.014" strokeLinecap="round" />
-          <path d="M 0.62 -0.8 L 0.73 -0.72 L 0.62 -0.64" fill="none" stroke="white" strokeOpacity="0.5" strokeWidth="0.014" strokeLinecap="round" strokeLinejoin="round" />
-        </g>
-      </svg>
-
-      {/* HUD */}
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        {["top-5 left-5 border-t border-l", "top-5 right-5 border-t border-r", "bottom-5 left-5 border-b border-l", "bottom-5 right-5 border-b border-r"].map((c) => (
-          <span key={c} className={cn("absolute size-6 border-white/20", c)} />
-        ))}
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between px-8 pt-8 md:px-12">
-        <div className="flex items-center gap-2">
-          <span className="size-2 rounded-full bg-accent shadow-[0_0_8px_#ff4d30]" />
-          <span className="label text-foreground">{profile.shortName}</span>
-          <span className="label hidden text-muted sm:inline">/ Secure entry</span>
+      {/* TACTICAL GAME HUD (PlayStation / Action Game Style) */}
+
+      {/* Top Telemetry Bar */}
+      <header className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between p-6 md:p-8">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1.5 backdrop-blur-md">
+            <span className="size-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_#ff0000]" />
+            <span className="font-mono text-[11px] tracking-wider text-white uppercase">RECON RC-01</span>
+          </div>
+
+          <div className="hidden sm:flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1.5 font-mono text-[11px] text-zinc-400 backdrop-blur-md">
+            <Radio className="size-3 text-cyan-400 animate-pulse" />
+            <span>LINK 99.8%</span>
+          </div>
         </div>
-        <span className="label text-muted">
-          Vault <span className="text-foreground">01</span>
-        </span>
+
+        {/* Center Target Proximity Meter */}
+        <div className="hidden md:flex flex-col items-center gap-1 rounded-xl border border-white/10 bg-black/50 px-6 py-2 backdrop-blur-md">
+          <span className="font-mono text-[10px] tracking-widest text-zinc-400 uppercase">VAULT PROXIMITY</span>
+          <div className="flex items-center gap-2">
+            <Crosshair className={cn("size-3.5 transition-colors", inRange ? "text-cyan-400 animate-spin" : "text-zinc-500")} />
+            <span className={cn("font-mono text-base font-bold tabular-nums", inRange ? "text-cyan-400" : "text-white")}>
+              {distance.toFixed(1)}m
+            </span>
+          </div>
+        </div>
+
+        {/* Top Right Controls: Audio & Skip */}
+        <div className="pointer-events-auto flex items-center gap-3">
+          <button
+            type="button"
+            onClick={toggleSound}
+            aria-label={soundEnabled ? "Mute audio" : "Unmute audio"}
+            className="flex size-10 items-center justify-center rounded-full border border-white/15 bg-black/40 text-zinc-300 backdrop-blur-md transition-colors hover:border-cyan-400 hover:text-white"
+          >
+            {soundEnabled ? <Volume2 className="size-4" /> : <VolumeX className="size-4 text-zinc-500" />}
+          </button>
+
+          <button
+            type="button"
+            onClick={skipIntro}
+            className="label rounded-full border border-white/15 bg-black/40 px-4 py-2 text-zinc-300 backdrop-blur-md transition-all hover:border-accent hover:text-white hover:shadow-[0_0_12px_rgba(255,77,48,0.3)]"
+          >
+            Skip intro
+          </button>
+        </div>
+      </header>
+
+      {/* Crosshair Center Reticle */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-25">
+        <div className="size-16 rounded-full border border-dashed border-white/40" />
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-3 px-6 pb-10 text-center">
-        <p aria-live="polite" className={cn("label", phase === "locked" ? "text-foreground" : "text-accent")}>
-          {status}
-          {!ready && <span className="animate-pulse">…</span>}
-        </p>
-        <p className="font-mono text-[11px] tracking-[0.2em] text-muted uppercase">
-          Unlock <span ref={pct} className="text-foreground tabular-nums">000</span>%
-          <span className="hidden sm:inline"> · or scroll / press →</span>
+      {/* Screen Corner Framing Accents */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 p-4 md:p-6">
+        <span className="absolute top-4 left-4 size-6 border-t-2 border-l-2 border-cyan-500/40" />
+        <span className="absolute top-4 right-4 size-6 border-t-2 border-r-2 border-cyan-500/40" />
+        <span className="absolute bottom-4 left-4 size-6 border-b-2 border-l-2 border-cyan-500/40" />
+        <span className="absolute bottom-4 right-4 size-6 border-b-2 border-r-2 border-cyan-500/40" />
+      </div>
+
+      {/* BOTTOM LEFT: VIRTUAL ANALOG JOYSTICK */}
+      <div className="absolute bottom-8 left-8 z-30 select-none">
+        <div
+          ref={joystickBase}
+          onPointerDown={handleJoystickStart}
+          onPointerMove={handleJoystickPointerMove}
+          onPointerUp={handleJoystickEnd}
+          onPointerCancel={handleJoystickEnd}
+          className="relative flex size-28 items-center justify-center rounded-full border-2 border-white/20 bg-black/60 shadow-[0_0_20px_rgba(0,0,0,0.8)] backdrop-blur-md cursor-grab active:cursor-grabbing md:size-32"
+        >
+          {/* Axis crosshair lines */}
+          <div className="pointer-events-none absolute h-full w-px bg-white/10" />
+          <div className="pointer-events-none absolute h-px w-full bg-white/10" />
+          <div className="pointer-events-none absolute size-14 rounded-full border border-white/10" />
+
+          {/* Dynamic Thumbstick Knob */}
+          <div
+            ref={joystickKnob}
+            className="pointer-events-none absolute flex size-12 items-center justify-center rounded-full border-2 border-cyan-400 bg-zinc-800 shadow-[0_0_15px_rgba(0,240,255,0.4)] transition-transform duration-75"
+          >
+            <div className="size-3 rounded-full bg-cyan-400" />
+          </div>
+        </div>
+        <p className="mt-2 text-center font-mono text-[10px] tracking-wider text-zinc-400 uppercase">
+          JOYSTICK / WASD
         </p>
       </div>
 
-      <button
-        type="button"
-        onClick={unlock}
-        disabled={phase !== "locked"}
-        className="label absolute right-8 bottom-9 rounded-full border border-line px-4 py-2 text-muted transition-colors hover:border-accent hover:text-accent disabled:opacity-0 md:right-12"
-      >
-        Skip intro
-      </button>
+      {/* BOTTOM RIGHT: PLAYSTATION-STYLE ACTION PROMPT */}
+      <div className="absolute bottom-8 right-8 z-30 flex flex-col items-end gap-3">
+        {/* Drive Instructions Hint (when far from gate) */}
+        {!inRange && phase === "driving" && (
+          <div className="rounded-xl border border-white/10 bg-black/60 px-4 py-3 backdrop-blur-md">
+            <p className="font-mono text-xs text-zinc-300">
+              DRIVE FORWARD TO VAULT GATE
+            </p>
+            <p className="mt-0.5 font-mono text-[10px] text-zinc-500">
+              KEYBOARD [W,A,S,D] OR VIRTUAL JOYSTICK
+            </p>
+          </div>
+        )}
+
+        {/* PLAYSTATION BUTTON PROMPT (Appears when near gate!) */}
+        {inRange && phase === "driving" && (
+          <button
+            type="button"
+            onClick={triggerBypass}
+            className="group relative flex items-center gap-4 overflow-hidden rounded-2xl border-2 border-cyan-400 bg-black/85 px-6 py-4 shadow-[0_0_30px_rgba(0,240,255,0.4)] backdrop-blur-lg transition-all duration-300 hover:scale-105 hover:border-white hover:shadow-[0_0_40px_rgba(0,240,255,0.7)] active:scale-95"
+          >
+            {/* Background cyber scan line */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/15 to-transparent animate-[shimmer_2s_infinite]" />
+
+            {/* PlayStation Square Button Glyph */}
+            <div className="relative flex size-10 items-center justify-center rounded-xl border-2 border-pink-400 bg-pink-500/20 shadow-[0_0_15px_#ff69b4]">
+              {/* PlayStation Square Icon */}
+              <div className="size-4.5 rounded-[3px] border-2 border-pink-300 shadow-[0_0_6px_#ff69b4]" />
+            </div>
+
+            <div className="flex flex-col text-left">
+              <span className="font-mono text-sm font-bold tracking-wider text-white uppercase group-hover:text-cyan-300">
+                HOLD [ ▢ ] TO BYPASS GATE
+              </span>
+              <span className="font-mono text-[10px] tracking-widest text-cyan-400">
+                OR PRESS [SPACE / E] · CLICK TO HACK
+              </span>
+            </div>
+          </button>
+        )}
+
+        {/* Hacking / Bypassing Progress State */}
+        {phase === "bypassing" && (
+          <div className="flex flex-col items-end gap-2 rounded-2xl border-2 border-cyan-400 bg-black/90 p-5 shadow-[0_0_35px_rgba(0,240,255,0.6)] backdrop-blur-lg">
+            <div className="flex items-center gap-3">
+              <div className="size-3 rounded-full bg-cyan-400 animate-ping" />
+              <span className="font-mono text-sm font-bold tracking-wider text-cyan-300 uppercase">
+                BYPASSING VAULT MATRIX...
+              </span>
+            </div>
+
+            {/* Progress bar */}
+            <div className="h-2 w-64 overflow-hidden rounded-full bg-zinc-800">
+              <div
+                className="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-all duration-100 shadow-[0_0_10px_#00f0ff]"
+                style={{ width: `${hackProgress * 100}%` }}
+              />
+            </div>
+            <span className="font-mono text-[11px] text-zinc-400">
+              OVERRIDE: {Math.round(hackProgress * 100)}%
+            </span>
+          </div>
+        )}
+
+        {/* Unlocked / Granted State */}
+        {phase === "unlocked" && (
+          <div className="flex items-center gap-3 rounded-2xl border-2 border-emerald-400 bg-black/90 px-6 py-4 shadow-[0_0_35px_rgba(52,211,153,0.7)] backdrop-blur-lg animate-bounce">
+            <ShieldAlert className="size-5 text-emerald-400" />
+            <span className="font-mono text-sm font-bold tracking-wider text-emerald-300 uppercase">
+              SECURITY OVERRIDDEN — ENTERING
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
