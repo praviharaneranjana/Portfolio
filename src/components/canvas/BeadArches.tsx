@@ -4,6 +4,7 @@ import { useLayoutEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { siteConfig } from "@/config/site";
+import { intro, secondsSinceOpen } from "@/lib/gate";
 
 // Three ribbed arches, each a tube of bead rings — modelled on a sculptural studio render.
 const ARCHES = [
@@ -27,6 +28,10 @@ const ARCH_PATH = [
 const RING_RADIUS = 0.48;
 const BEAD_RADIUS = 0.112;
 const RIPPLE = 0.035;
+/** How far below its resting place each pillar starts its entrance. */
+const RISE_FROM = -7.5;
+
+const outQuart = (x: number) => 1 - Math.pow(1 - x, 4);
 
 type Instance = { cx: number; cy: number; cz: number; dx: number; dy: number; dz: number; s: number; arch: number; scale: number };
 
@@ -64,13 +69,15 @@ function buildInstances(rings: number, beads: number) {
 export function BeadArches({ reducedMotion, lowDetail }: { reducedMotion: boolean; lowDetail: boolean }) {
   const mesh = useRef<THREE.InstancedMesh>(null);
   const group = useRef<THREE.Group>(null);
-  const born = useRef<number | null>(null);
+  const cores = useRef<(THREE.Mesh | null)[]>([]);
+  const lift = useRef<number[]>(ARCHES.map(() => (reducedMotion ? 0 : RISE_FROM)));
   const { curve, instances } = useMemo(() => buildInstances(lowDetail ? 60 : 84, lowDetail ? 12 : 15), [lowDetail]);
   const { material: mat } = siteConfig.scene;
   const ripple = siteConfig.scene.ripple && !reducedMotion;
 
   const writeMatrices = (time: number) => {
     const arr = mesh.current!.instanceMatrix.array as Float32Array;
+    const dy = lift.current;
     for (let i = 0; i < instances.length; i++) {
       const it = instances[i];
       const wave = ripple ? Math.sin(time * 1.4 - it.s * 14 + ARCHES[it.arch].phase) * RIPPLE : 0;
@@ -79,7 +86,7 @@ export function BeadArches({ reducedMotion, lowDetail }: { reducedMotion: boolea
       const o = i * 16;
       arr[o] = s; arr[o + 5] = s; arr[o + 10] = s; arr[o + 15] = 1;
       arr[o + 12] = it.cx + it.dx * r;
-      arr[o + 13] = it.cy + it.dy * r;
+      arr[o + 13] = it.cy + it.dy * r + dy[it.arch];
       arr[o + 14] = it.cz + it.dz * r;
     }
     mesh.current!.instanceMatrix.needsUpdate = true;
@@ -95,19 +102,26 @@ export function BeadArches({ reducedMotion, lowDetail }: { reducedMotion: boolea
     const g = group.current;
     if (!g) return;
     const t = state.clock.elapsedTime;
-    born.current ??= t;
 
-    // Entrance: rise from below the frame.
-    const k = reducedMotion ? 1 : Math.min((t - born.current) / 2.4, 1);
-    const ease = 1 - Math.pow(1 - k, 4);
+    // Entrance: once the gate opens, the pillars rise one after another (left, centre, right).
+    const since = secondsSinceOpen();
+    let entering = false;
+    ARCHES.forEach((_, a) => {
+      const k = since === null ? 0 : reducedMotion ? 1 : (since - a * intro.pillarStagger) / intro.pillarRise;
+      const y = RISE_FROM * (1 - outQuart(THREE.MathUtils.clamp(k, 0, 1)));
+      if (y !== lift.current[a]) entering = true;
+      lift.current[a] = y;
+      const core = cores.current[a];
+      if (core) core.position.y = y;
+    });
 
     const scroll = Math.min(window.scrollY / window.innerHeight, 1.5);
     const breathe = reducedMotion ? 0 : Math.sin(t * 0.7) * 0.05;
-    g.position.y = -3.5 * (1 - ease) + breathe - scroll * 1.1;
+    g.position.y = breathe - scroll * 1.1;
     g.rotation.y += (state.pointer.x * 0.22 + scroll * 0.35 - g.rotation.y) * 0.05;
     g.rotation.x += (-state.pointer.y * 0.06 - g.rotation.x) * 0.05;
 
-    if (ripple) writeMatrices(t);
+    if (ripple || entering) writeMatrices(t);
   });
 
   const segments = lowDetail ? [10, 8] : [14, 10];
@@ -125,8 +139,16 @@ export function BeadArches({ reducedMotion, lowDetail }: { reducedMotion: boolea
         />
       </instancedMesh>
       {/* Dark cores stop light leaking between the beads. */}
-      {ARCHES.map((arch) => (
-        <mesh key={arch.x} position={[arch.x, 0, arch.z]} rotation={[0, 0, arch.tilt]} scale={arch.scale}>
+      {ARCHES.map((arch, a) => (
+        <mesh
+          key={arch.x}
+          ref={(m) => {
+            cores.current[a] = m;
+          }}
+          position={[arch.x, reducedMotion ? 0 : RISE_FROM, arch.z]}
+          rotation={[0, 0, arch.tilt]}
+          scale={arch.scale}
+        >
           <tubeGeometry args={[curve, 96, RING_RADIUS * 0.9, 12, false]} />
           <meshStandardMaterial color="#050506" roughness={0.9} />
         </mesh>

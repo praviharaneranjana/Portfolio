@@ -11,7 +11,7 @@ export function ContactForm() {
   const [state, action, pending] = useActionState<ContactState, FormData>(sendContact, { status: "idle" });
 
   return (
-    <form action={action} className="glass space-y-5 rounded-2xl p-8">
+    <form action={action} data-ball-floor className="glass space-y-5 rounded-2xl p-8">
       <input type="text" name="company" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
       <label className="block">
         <span className={labelCls}>Name / Organisation</span>

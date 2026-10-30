@@ -15,7 +15,7 @@ export function Capabilities() {
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
         {capabilities.map((c, i) => (
           <Reveal key={c.code} delay={i * 0.08} className="h-full">
-            <div className="flex h-full flex-col justify-between rounded-2xl border border-line bg-surface p-8 transition-colors duration-300 hover:border-accent/50">
+            <div data-ball-floor className="flex h-full flex-col justify-between rounded-2xl border border-line bg-surface p-8 transition-colors duration-300 hover:border-accent/50">
               <div>
                 <span className="font-mono text-xs text-muted uppercase">
                   {c.code} / {c.domain}

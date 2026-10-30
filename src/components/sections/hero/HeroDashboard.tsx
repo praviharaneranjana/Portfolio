@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { profile } from "@/content";
+import { intro } from "@/lib/gate";
 import { LiveClock } from "../contact/LiveClock";
 
 type TabId = "telemetry" | "stack" | "clearance";
@@ -28,7 +29,8 @@ export function HeroDashboard({ trigger = true }: { trigger?: boolean }) {
     <motion.div
       initial={{ opacity: 0, y: 24 }}
       animate={trigger ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
-      transition={{ duration: 0.9, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.9, delay: intro.text + 0.6, ease: [0.16, 1, 0.3, 1] }}
+      data-ball-floor
       className="glass mt-12 rounded-2xl border border-line p-5 md:p-6"
     >
       {/* Top Telemetry Header */}

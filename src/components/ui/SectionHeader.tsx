@@ -9,7 +9,7 @@ export function SectionHeader({ index, label, title, aside }: { index: string; l
             {`${index} // ${label}`}
           </p>
         </Reveal>
-        <h2 className="mt-4 text-4xl font-medium tracking-tight md:text-6xl">
+        <h2 data-ball-floor className="mt-4 text-4xl font-medium tracking-tight md:text-6xl">
           <MaskLines lines={[{ text: title }]} />
         </h2>
       </div>

@@ -35,14 +35,16 @@ npm run dev                  # http://localhost:3000
 - **Theme colours**: CSS variables at the top of [`src/app/globals.css`](src/app/globals.css).
 - **Your photo**: `public/images/profile.jpg` + `photo` in `src/content/profile.ts`.
 - **Hero code cards**: [`src/content/hero.ts`](src/content/hero.ts).
-- **3D scene**: [`src/components/canvas/`](src/components/canvas/). See [docs/3D.md](docs/3D.md).
+- **3D scene**: [`src/components/canvas/`](src/components/canvas/), intro gate in [`src/components/gate/`](src/components/gate/), rolling balls in [`src/components/balls/`](src/components/balls/). See [docs/3D.md](docs/3D.md).
+- **Gate model**: regenerate with Blender from [`blender/build_gate.py`](blender/build_gate.py). See [docs/BLENDER.md](docs/BLENDER.md).
 - **CV PDF**: replace `public/resume/Pravihara_Abegunasekara.pdf`.
 
 ## Docs
 
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — folder layout and how the pieces fit
 - [docs/CONTENT.md](docs/CONTENT.md) — editing your content
-- [docs/3D.md](docs/3D.md) — working with the 3D scene and models
+- [docs/3D.md](docs/3D.md) — the three 3D layers: intro gate, hero pillars, rolling balls
+- [docs/BLENDER.md](docs/BLENDER.md) — generating the gate model in Blender, realism checklist, node-name contract
 - [docs/DESIGN.md](docs/DESIGN.md) — design system and the brief for the final UI
 - [docs/ROADMAP.md](docs/ROADMAP.md) — what's done and what's next
 

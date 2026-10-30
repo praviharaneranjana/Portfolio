@@ -35,7 +35,7 @@ function Pipeline({ steps }: { steps: string[] }) {
 
 function Dossier({ project, index }: { project: Project; index: number }) {
   return (
-    <article className="group relative overflow-hidden rounded-2xl border border-line bg-surface p-8 transition-colors duration-500 hover:border-white/25 hover:bg-surface-elevated md:p-12">
+    <article data-ball-floor className="group relative overflow-hidden rounded-2xl border border-line bg-surface p-8 transition-colors duration-500 hover:border-white/25 hover:bg-surface-elevated md:p-12">
       <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
         <div className="space-y-6 lg:col-span-7">
           <div className="flex flex-wrap items-center gap-2">
@@ -132,7 +132,7 @@ export function Work() {
                   <span className="col-span-2 font-mono text-xs text-muted md:col-span-1">
                     {String(featured.length + i + 1).padStart(2, "0")}
                   </span>
-                  <span className="col-span-10 text-xl font-medium tracking-tight transition-colors group-hover:text-accent md:col-span-4">
+                  <span data-ball-floor className="col-span-10 text-xl font-medium tracking-tight transition-colors group-hover:text-accent md:col-span-4">
                     {p.title}
                   </span>
                   <span className="col-span-12 text-sm text-muted md:col-span-4">{p.subtitle}</span>

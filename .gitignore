@@ -42,3 +42,7 @@ next-env.d.ts
 
 # keep the template
 !.env.example
+
+# Blender: generated textures (packed into gate.blend / gate.glb) and autosave backups
+blender/textures/
+*.blend1

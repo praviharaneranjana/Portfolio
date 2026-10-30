@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import { siteConfig } from "@/config/site";
 import { profile } from "@/content";
-import { useGateOpen } from "@/lib/gate";
+import { intro, useGateOpen } from "@/lib/gate";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
@@ -19,7 +19,7 @@ export function Navbar() {
     <motion.header
       initial={{ y: -40, opacity: 0 }}
       animate={gateOpen ? { y: 0, opacity: 1 } : { y: -40, opacity: 0 }}
-      transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.8, delay: intro.text, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
         "fixed inset-x-0 top-0 z-50 border-b transition-colors duration-500",
         scrolled || open ? "border-line bg-background/75 backdrop-blur-md" : "border-transparent",

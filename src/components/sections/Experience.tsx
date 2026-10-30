@@ -18,7 +18,7 @@ export function Experience() {
             </div>
 
             <div className="lg:col-span-6">
-              <h3 className="text-3xl font-medium tracking-tight">{job.role}</h3>
+              <h3 data-ball-floor className="text-3xl font-medium tracking-tight">{job.role}</h3>
               <p className="mt-1 text-lg text-muted">{job.company}</p>
               {job.project && <p className="mt-6 border-l border-accent pl-4 text-sm text-zinc-300">{job.project}</p>}
               <ul className="mt-8 space-y-3 text-[15px] leading-relaxed font-light text-zinc-400">
@@ -39,7 +39,7 @@ export function Experience() {
             {job.metrics && (
               <div className="grid grid-cols-3 gap-4 self-start lg:col-span-3 lg:grid-cols-1">
                 {job.metrics.map((m) => (
-                  <div key={m.label} className="rounded-xl border border-line bg-surface p-5">
+                  <div key={m.label} data-ball-floor className="rounded-xl border border-line bg-surface p-5">
                     <p className="text-3xl font-medium tracking-tight md:text-4xl">{m.value}</p>
                     <p className="mt-1 font-mono text-[10px] tracking-wider text-muted uppercase">{m.label}</p>
                   </div>

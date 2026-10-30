@@ -41,7 +41,7 @@ export function Terminal() {
   };
 
   return (
-    <div className="max-w-4xl overflow-hidden rounded-2xl border border-line bg-background font-mono text-xs shadow-2xl">
+    <div data-ball-floor className="max-w-4xl overflow-hidden rounded-2xl border border-line bg-background font-mono text-xs shadow-2xl">
       <div className="flex items-center justify-between border-b border-line bg-surface px-4 py-3">
         <div className="flex items-center gap-2">
           <span className="size-3 rounded-full bg-[#ff5f56]" />

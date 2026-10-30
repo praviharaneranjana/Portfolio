@@ -12,7 +12,7 @@ export function Contact() {
           <Reveal>
             <p className="label text-accent">06 // Contact</p>
           </Reveal>
-          <h2 className="text-5xl leading-[1.05] font-medium tracking-[-0.03em] md:text-7xl">
+          <h2 data-ball-floor className="text-5xl leading-[1.05] font-medium tracking-[-0.03em] md:text-7xl">
             <MaskLines lines={[{ text: "Let's build", className: "text-muted" }, { text: "something remarkable." }]} />
           </h2>
           <Reveal delay={0.2} className="max-w-md leading-relaxed font-light text-zinc-400">

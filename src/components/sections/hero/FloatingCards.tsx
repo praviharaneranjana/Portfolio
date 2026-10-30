@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from "motion/react";
 import type { CodeCard } from "@/types/content";
-import { useGateOpen } from "@/lib/gate";
+import { intro, useGateOpen } from "@/lib/gate";
 import { CodeBlock } from "@/components/ui/CodeBlock";
 
 function CardBody({ card }: { card: CodeCard }) {
@@ -74,7 +74,7 @@ function FloatingCard({
       style={{ ...card.position, width: card.width, x, y, rotate }}
       initial={{ opacity: 0, scale: 0.94, filter: "blur(8px)" }}
       animate={trigger ? { opacity: 1, scale: 1, filter: "blur(0px)" } : { opacity: 0, scale: 0.94, filter: "blur(8px)" }}
-      transition={{ duration: 1.2, delay: 0.5 + index * 0.15, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 1.2, delay: intro.text + 0.3 + index * 0.15, ease: [0.16, 1, 0.3, 1] }}
     >
       {/* Idle drift, independent of the mouse */}
       <motion.div

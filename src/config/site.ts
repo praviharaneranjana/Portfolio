@@ -26,6 +26,17 @@ export const siteConfig = {
     ripple: true,
   },
 
+  /**
+   * Rolling balls: beaded balls (same material as the pillars) that start on the hero pillars and roll down the page
+   * as the visitor scrolls. Any element with a `data-ball-floor` attribute is a ledge. See docs/3D.md.
+   */
+  balls: {
+    enabled: true,
+    count: 3,
+    /** Ball radius in CSS pixels. */
+    radius: { desktop: 24, mobile: 15 },
+  },
+
   /** Intro: a 3D vault gate (built in Blender, see blender/build_gate.py) the visitor unlocks by turning the wheel. */
   gate: {
     enabled: true,

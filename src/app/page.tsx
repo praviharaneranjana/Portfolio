@@ -4,6 +4,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Cursor } from "@/components/ui/Cursor";
 import { Hero, sectionComponents } from "@/components/sections";
 import { IntroGate } from "@/components/gate/IntroGate";
+import { RollingBalls } from "@/components/balls/RollingBalls";
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
           })}
       </main>
       <Footer />
+      <RollingBalls />
     </>
   );
 }

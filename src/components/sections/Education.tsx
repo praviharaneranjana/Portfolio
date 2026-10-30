@@ -9,7 +9,7 @@ export function Education() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
             <p className="label text-accent md:col-span-3">04 // Education</p>
             <div className="md:col-span-6">
-              <h3 className="text-2xl font-medium tracking-tight md:text-3xl">{e.degree}</h3>
+              <h3 data-ball-floor className="text-2xl font-medium tracking-tight md:text-3xl">{e.degree}</h3>
               <p className="mt-1 text-muted">{e.institution}</p>
               <p className="mt-5 text-sm leading-relaxed text-zinc-400">{e.modules.join(" · ")}</p>
             </div>
