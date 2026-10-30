@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from "motion/react";
 import type { CodeCard } from "@/types/content";
+import { useGateOpen } from "@/lib/gate";
 import { CodeBlock } from "@/components/ui/CodeBlock";
 
 function CardBody({ card }: { card: CodeCard }) {
@@ -49,7 +50,19 @@ function CardBody({ card }: { card: CodeCard }) {
   return null;
 }
 
-function FloatingCard({ card, index, mx, my }: { card: CodeCard; index: number; mx: MotionValue<number>; my: MotionValue<number> }) {
+function FloatingCard({
+  card,
+  index,
+  mx,
+  my,
+  trigger,
+}: {
+  card: CodeCard;
+  index: number;
+  mx: MotionValue<number>;
+  my: MotionValue<number>;
+  trigger: boolean;
+}) {
   const reduce = useReducedMotion();
   const x = useTransform(mx, (v) => v * card.depth);
   const y = useTransform(my, (v) => v * card.depth * 0.7);
@@ -60,8 +73,8 @@ function FloatingCard({ card, index, mx, my }: { card: CodeCard; index: number; 
       className="absolute"
       style={{ ...card.position, width: card.width, x, y, rotate }}
       initial={{ opacity: 0, scale: 0.94, filter: "blur(8px)" }}
-      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-      transition={{ duration: 1.2, delay: 1.1 + index * 0.15, ease: [0.16, 1, 0.3, 1] }}
+      animate={trigger ? { opacity: 1, scale: 1, filter: "blur(0px)" } : { opacity: 0, scale: 0.94, filter: "blur(8px)" }}
+      transition={{ duration: 1.2, delay: 0.5 + index * 0.15, ease: [0.16, 1, 0.3, 1] }}
     >
       {/* Idle drift, independent of the mouse */}
       <motion.div
@@ -91,7 +104,9 @@ function FloatingCard({ card, index, mx, my }: { card: CodeCard; index: number; 
   );
 }
 
-export function FloatingCards({ cards }: { cards: CodeCard[] }) {
+export function FloatingCards({ cards, trigger }: { cards: CodeCard[]; trigger?: boolean }) {
+  const gateOpen = useGateOpen();
+  const isTriggered = trigger ?? gateOpen;
   const reduce = useReducedMotion();
   const rawX = useMotionValue(0);
   const rawY = useMotionValue(0);
@@ -114,7 +129,7 @@ export function FloatingCards({ cards }: { cards: CodeCard[] }) {
   return (
     <motion.div aria-hidden className="pointer-events-none absolute inset-0 z-10 hidden lg:block" style={{ opacity, y: lift }}>
       {cards.map((card, i) => (
-        <FloatingCard key={card.id} card={card} index={i} mx={mx} my={my} />
+        <FloatingCard key={card.id} card={card} index={i} mx={mx} my={my} trigger={isTriggered} />
       ))}
     </motion.div>
   );

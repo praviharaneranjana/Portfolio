@@ -25,6 +25,16 @@ export const siteConfig = {
     /** Animated ripple along the beads. Disabled automatically for prefers-reduced-motion. */
     ripple: true,
   },
+
+  /** Intro: a 3D vault gate (built in Blender, see blender/build_gate.py) the visitor unlocks by turning the wheel. */
+  gate: {
+    enabled: true,
+    model: "/models/gate.glb",
+    /** Full turns of the wheel needed to unlock. */
+    turns: 1,
+    /** Skip the gate on reloads within the same browser tab. */
+    oncePerSession: false,
+  },
 } as const;
 
 export type SectionId = (typeof siteConfig.sections)[number]["id"];

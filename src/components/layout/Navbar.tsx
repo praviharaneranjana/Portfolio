@@ -4,11 +4,13 @@ import { useState } from "react";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import { siteConfig } from "@/config/site";
 import { profile } from "@/content";
+import { useGateOpen } from "@/lib/gate";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const gateOpen = useGateOpen();
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 40));
   const links = siteConfig.sections.filter((s) => s.enabled && s.nav);
@@ -16,8 +18,8 @@ export function Navbar() {
   return (
     <motion.header
       initial={{ y: -40, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      animate={gateOpen ? { y: 0, opacity: 1 } : { y: -40, opacity: 0 }}
+      transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
         "fixed inset-x-0 top-0 z-50 border-b transition-colors duration-500",
         scrolled || open ? "border-line bg-background/75 backdrop-blur-md" : "border-transparent",

@@ -34,8 +34,12 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-      <body className="min-h-svh font-sans">
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+    >
+      <body suppressHydrationWarning className="min-h-svh font-sans">
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>

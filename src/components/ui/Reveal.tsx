@@ -5,14 +5,32 @@ import type { ReactNode } from "react";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-/** Fade-and-rise when scrolled into view. */
-export function Reveal({ children, delay = 0, className }: { children: ReactNode; delay?: number; className?: string }) {
+/** Fade-and-rise when scrolled into view (or explicitly triggered when gate unlocks). */
+export function Reveal({
+  children,
+  delay = 0,
+  className,
+  trigger,
+}: {
+  children: ReactNode;
+  delay?: number;
+  className?: string;
+  trigger?: boolean;
+}) {
+  const animateState =
+    trigger !== undefined
+      ? trigger
+        ? { opacity: 1, y: 0 }
+        : { opacity: 0, y: 28 }
+      : undefined;
+
   return (
     <motion.div
       className={className}
       initial={{ opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
+      {...(animateState
+        ? { animate: animateState }
+        : { whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: "-80px" } })}
       transition={{ duration: 0.9, delay, ease }}
     >
       {children}
@@ -26,20 +44,34 @@ export function MaskLines({
   className,
   delay = 0,
   onMount = false,
+  trigger,
 }: {
   lines: { text: string; className?: string }[];
   className?: string;
   delay?: number;
   /** Animate on page load instead of on scroll (for the hero). */
   onMount?: boolean;
+  /** Explicit trigger state (e.g. once gate unlocks). Takes precedence over onMount. */
+  trigger?: boolean;
 }) {
+  const animateState =
+    trigger !== undefined
+      ? trigger
+        ? "show"
+        : "hidden"
+      : onMount
+        ? "show"
+        : undefined;
+
   // The trigger sits on the unclipped wrapper: the lines themselves start hidden behind
   // overflow:hidden, so an in-view check on them would never fire.
   return (
     <motion.span
       className={`block ${className ?? ""}`}
       initial="hidden"
-      {...(onMount ? { animate: "show" } : { whileInView: "show", viewport: { once: true, margin: "-60px" } })}
+      {...(animateState
+        ? { animate: animateState }
+        : { whileInView: "show", viewport: { once: true, margin: "-60px" } })}
       transition={{ staggerChildren: 0.12, delayChildren: delay }}
     >
       {lines.map((line, i) => (
