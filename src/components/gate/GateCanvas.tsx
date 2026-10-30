@@ -8,6 +8,7 @@ import { Box3, MathUtils, Vector3, type Group, type MeshStandardMaterial, type O
 import { siteConfig } from "@/config/site";
 import { RCCar, type CarInput } from "./RCCar";
 import { HangarEnvironment } from "./HangarEnvironment";
+import { EternityVoid } from "./EternityVoid";
 
 export type GateControl = {
   progress: number;
@@ -28,12 +29,12 @@ const BG = siteConfig.scene.background;
 // Cinematic unlock timeline (in seconds after unlock trigger)
 const T = {
   bolts: [0.1, 0.8],
-  dial: [0.2, 1.8],
+  dial: [0.2, 1.7],
   pins: [0.3, 0.9],
   unseal: [0.6, 1.0],
   doors: [1.0, 2.4],
-  cameraZoomOut: [0.0, 1.4],
-  cameraFlyThrough: [2.0, 3.2],
+  cameraZoomOut: [0.0, 1.3],
+  cameraVoidChase: [1.3, 3.8],
 } as const;
 
 const seg = (t: number, [a, b]: readonly [number, number]) => MathUtils.clamp((t - a) / (b - a), 0, 1);
@@ -140,6 +141,9 @@ function SceneContent({ ctrl, inputRef, onDistanceUpdate, isBypassing, isUnlocke
       doorL.position.set(-4.6 * open, 0, unseal);
       doorR.position.set(4.6 * open, 0, unseal);
 
+      // The entire rotation dial wheel travels with DoorR to the right (never left hovering in the center!)
+      dial.position.set(doorR.position.x, 0, unseal);
+
       // Warm Coral Light Spills From Inside Vault Portal
       if (portalSpill.current) {
         portalSpill.current.intensity = 55 * seg(t, [0.8, 2.0]);
@@ -154,29 +158,35 @@ function SceneContent({ ctrl, inputRef, onDistanceUpdate, isBypassing, isUnlocke
     const car = carPosition.current;
 
     if (t >= 0) {
-      // CINEMATIC OPENING FLOW:
-      // First: Zoom out slightly to reveal the entire majestic gate mechanism opening
-      // Then: Swoop forward through the open doors into the portal
-      const zoomOutFactor = inOutCubic(seg(t, T.cameraZoomOut));
-      const flyFactor = inCubic(seg(t, T.cameraFlyThrough));
+      // DYNAMIC UNLOCK & CHASE CINEMATIC:
+      // 1. Initial stage (t < 1.2s): Anticipation framing as the safe dial rotates and bolts pull back
+      // 2. Drive-through stage (t >= 1.2s): Chase camera follows the RC car smoothly into the dark void towards Door to Eternity
+      const zoomOut = inOutCubic(seg(t, T.cameraZoomOut));
+      const voidChase = inOutCubic(seg(t, T.cameraVoidChase));
 
-      const wideCamZ = isMobile ? 10.5 : 9.5;
-      const wideCamY = isMobile ? 0.8 : 0.2;
+      if (voidChase > 0.01) {
+        // High-speed chase behind the car as it enters the dark void corridor
+        const followDist = isMobile ? 4.2 : 3.6;
+        const camHeight = isMobile ? 1.6 : 1.2;
 
-      const currentZ = MathUtils.lerp(
-        car.z + 4.2,
-        wideCamZ - flyFactor * 13.0,
-        zoomOutFactor,
-      );
+        const targetCamZ = car.z + followDist;
+        const targetCamY = car.y + camHeight;
+        const targetCamX = car.x * 0.5;
 
-      const currentY = MathUtils.lerp(
-        car.y + 1.8,
-        wideCamY,
-        zoomOutFactor,
-      );
+        cameraTarget.current.lerp(new Vector3(targetCamX, targetCamY, targetCamZ), dt * 9);
+        // Look ahead towards the radiant Door to Eternity portal at Z = -36
+        cameraLook.current.lerp(new Vector3(0, -0.4, car.z - 12.0), dt * 10);
+      } else {
+        // Anticipation framing while gate mechanism activates
+        const wideCamZ = isMobile ? 10.5 : 9.5;
+        const wideCamY = isMobile ? 0.8 : 0.2;
 
-      cameraTarget.current.set(car.x * 0.4, currentY, currentZ);
-      cameraLook.current.set(0, -0.6, -8.0);
+        const currentZ = MathUtils.lerp(car.z + 4.2, wideCamZ, zoomOut);
+        const currentY = MathUtils.lerp(car.y + 1.8, wideCamY, zoomOut);
+
+        cameraTarget.current.set(car.x * 0.4, currentY, currentZ);
+        cameraLook.current.set(0, -0.6, -6.0);
+      }
     } else {
       // ACTIVE 3RD-PERSON CHASE CAMERA
       // Wider FOV / distance on mobile so the user has full environmental visibility
@@ -212,6 +222,9 @@ function SceneContent({ ctrl, inputRef, onDistanceUpdate, isBypassing, isUnlocke
 
       {/* Realistic Concrete Hangar & Guided Tracks */}
       <HangarEnvironment inAccessZone={inAccessZone} />
+
+      {/* Second Scene: The Really Dark Place Void & Door to Eternity Portal */}
+      <EternityVoid isUnlocked={isUnlocked} />
 
       {/* Playable Military RC Car */}
       <RCCar
@@ -250,18 +263,18 @@ function StableLighting() {
 export default function GateCanvas(props: Props) {
   return (
     <Canvas
-      camera={{ position: [0, 1.2, 14], fov: 40, near: 0.1, far: 80 }}
+      camera={{ position: [0, 1.2, 14], fov: 40, near: 0.1, far: 110 }}
       dpr={[1, 1.5]}
       gl={{ antialias: true, powerPreference: "high-performance" }}
     >
-      <color attach="background" args={[BG]} />
-      <fog attach="fog" args={[BG, 18, 48]} />
+      <color attach="background" args={["#030407"]} />
+      <fog attach="fog" args={["#030407", 24, 75]} />
       <StableLighting />
       <Suspense fallback={null}>
         <SceneContent {...props} />
       </Suspense>
       <EffectComposer multisampling={0}>
-        <Bloom mipmapBlur luminanceThreshold={1.2} intensity={0.4} radius={0.5} />
+        <Bloom mipmapBlur luminanceThreshold={1.1} intensity={0.45} radius={0.55} />
         <Vignette offset={0.3} darkness={0.7} />
       </EffectComposer>
     </Canvas>

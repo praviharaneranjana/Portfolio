@@ -181,8 +181,10 @@ export function RCCar({ inputRef, onPositionUpdate, isBypassing, isUnlocked }: R
       wheelBR.current.rotation.x = wheelRot.current;
     }
 
-    // Update sound engine pitch
-    sound.updateEngine(Math.abs(speed.current) / 7.5);
+    // Update drive sounds: electric brushless motor, rubber tire rolling on floor, and lateral scrub
+    const speedPct = Math.min(1, Math.abs(speed.current) / 7.5);
+    const isAccel = Math.abs(input.forward) > 0 || isUnlocked;
+    sound.updateDriveSounds(speedPct, steerAngle.current, isAccel);
 
     onPositionUpdate(pos.current, speed.current);
   });

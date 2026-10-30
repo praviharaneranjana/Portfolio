@@ -13,8 +13,8 @@ import { sound } from "./sound";
 
 const GateCanvas = dynamic(() => import("./GateCanvas"), { ssr: false });
 
-const UNLOCK_ANIMATION_DURATION = 3100; // ms to let the car drive through and doors open
-const FADE_AT = 2500;
+const UNLOCK_ANIMATION_DURATION = 4200; // ms to let the car drive through the gate into the Door to Eternity
+const FADE_AT = 3500;
 const SESSION_KEY = "gate-unlocked";
 const HOLD_DURATION_MS = 650; // ms required to hold the PlayStation button to bypass
 
@@ -434,10 +434,10 @@ function RCGateExperience() {
 
         {/* Unlocking / Access Granted Status */}
         {phase === "unlocked" && (
-          <div className="flex items-center gap-2.5 rounded-full border border-emerald-500/40 bg-zinc-950/90 px-5 py-2.5 shadow-[0_0_30px_rgba(16,185,129,0.35)] backdrop-blur-md">
-            <ShieldCheck className="size-4 text-emerald-400" />
-            <span className="font-mono text-xs sm:text-sm font-bold tracking-wider text-emerald-300 uppercase">
-              SECURITY OVERRIDDEN
+          <div className="flex items-center gap-2.5 rounded-full border border-cyan-400/40 bg-zinc-950/90 px-5 py-2.5 shadow-[0_0_30px_rgba(56,189,248,0.35)] backdrop-blur-md">
+            <span className="size-2 rounded-full bg-cyan-400 animate-ping" />
+            <span className="font-mono text-xs sm:text-sm font-bold tracking-wider text-cyan-300 uppercase">
+              ENTERING DOOR TO ETERNITY
             </span>
           </div>
         )}
