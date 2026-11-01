@@ -32,7 +32,7 @@ export const profile: Profile = {
     badgeText: "• Open to .NET roles • Explore ",
   },
   socials: [
-    { label: "LinkedIn", href: "https://linkedin.com/in/pravihara-neranjana", icon: "linkedin" },
+    { label: "LinkedIn", href: "https://linkedin.com/in/pravihara-neranjana-0ab495395", icon: "linkedin" },
     { label: "Email", href: "mailto:pravihranera1998@gmail.com", icon: "mail" },
     // TODO: add your real profile URLs — links without a URL are not shown.
     // { label: "GitHub", href: "https://github.com/<username>", icon: "github" },
