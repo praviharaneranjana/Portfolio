@@ -1,171 +1,191 @@
-// 2D physics for the rolling balls, in document pixels (y grows downward). Pure functions, no DOM or three.js.
+// Route-following motion for the rolling balls, in document pixels (y grows downward). Pure functions, no DOM or
+// three.js.
 //
-// Floors are one-way platforms (the top edge of a DOM element or a hero pillar): balls land on them from above and
-// pass through from below. A floor "drains" once it scrolls into the top part of the screen: balls on it are pushed
-// toward its nearer edge, roll off, and drop to the next floor. The bottom edge of the viewport is a solid floor and
-// the top edge feeds balls back in, so the balls always stay on screen and travel down the page with the reader.
+// Every element marked `data-ball-floor` is a ledge. The ledges are sorted top to bottom into one route, and each
+// ball walks it one ledge at a time: it rolls along a ledge as the reader scrolls, rolls off the end nearest the next
+// ledge and falls (or hops) onto it. Where a ball should be on the route comes from the scroll position, so the balls
+// travel down the page with the content, at the reader's pace, and never skip a ledge that is on screen.
 
-export type Floor = { x0: number; x1: number; y: number; drain: boolean };
-
-export type Ball = {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  r: number;
-  /** Roll angle (rad) and angular velocity. */
-  angle: number;
-  spin: number;
-  /** Squash amount (0 = round, + = flattened) and its spring velocity. */
-  squash: number;
-  squashV: number;
-  grounded: boolean;
-  /** Falling back in from the top: skips draining floors and lands on the first one it can stay on. */
-  dropping?: boolean;
-};
+/** The top edge of an element (or a pillar crown). `key` identifies it across re-measures. */
+export type Ledge = { key: unknown; x0: number; x1: number; y: number };
 
 /** Visible part of the document: scrollY, viewport width and height. */
 export type View = { top: number; width: number; height: number };
 
+export type Ball = {
+  /** Centre. */
+  x: number;
+  y: number;
+  /** Rolling speed along the ledge (px/s). */
+  vx: number;
+  r: number;
+  /** Roll angle (rad). */
+  angle: number;
+  /** Squash amount (0 = round, + = flattened) and its spring velocity. */
+  squash: number;
+  squashV: number;
+};
+
+/** A ballistic hop from one point to a landing point: constant horizontal speed, gravity on y. */
+export type Flight = { x0: number; y0: number; dx: number; vy0: number; T: number; g: number };
+
 export const PHYS = {
-  gravity: 2600,
-  /** Bounce on floors / walls / other balls. */
-  restitution: 0.3,
-  wallRestitution: 0.45,
-  /** Exponential decay of horizontal speed while rolling. */
-  rollFriction: 1.5,
-  /** Sideways push on a draining floor (px/s²). */
-  drainAccel: 1100,
-  /** A floor drains once its top is above this fraction of the viewport height. */
-  drainLine: 0.32,
-  /** Gap kept between balls resting on the viewport bottom and the screen edge. */
-  screenMargin: 8,
-  /** Impacts slower than this (px/s) settle instead of bouncing. */
-  restSpeed: 220,
+  /** Ball j follows the ledge that last crossed `anchors[j]` of the viewport height (spreads the balls out). */
+  anchors: [0.42, 0.56, 0.7],
+  /** A ledge closer than this to the top of the viewport (under the navbar) hands the ball on to the next one. */
+  topMargin: 96,
+  /** The next ledge must be this far above the bottom of the viewport before a ball drops onto it. */
+  bottomMargin: 24,
+  /** Rolling speed (px/s); and the extra share per ledge a ball has fallen behind the reader. */
+  rollSpeed: 280,
+  catchUp: 0.8,
+  /** How quickly rolling speed follows its target (1/s). */
+  rollResponse: 7,
+  /** Gravity for falls and hops (px/s²). Lower than real so drops read clearly. */
+  gravity: 2000,
+  /** Shortest hop (s) and horizontal speed of sideways hops (px/s). */
+  minHop: 0.16,
+  hopSpeed: 650,
+  /** Landings faster than this (px/s) bounce once; the bounce keeps this share of the impact speed. */
+  bounceSpeed: 600,
+  restitution: 0.24,
   /** Squash spring: stiffness, damping, and how much an impact compresses the ball. Soft, so it jiggles. */
   squashK: 240,
   squashC: 8,
   squashKick: 0.006,
-  /** Landings faster than this (px/s) squish the ball, even when they don't bounce. */
-  squishSpeed: 40,
-  maxSpeed: 2600,
-  /** Physics substep (s). */
-  dt: 1 / 240,
+  /** Ledges at nearly the same height that touch (within this many radii) are merged into one. */
+  mergeGap: 1.5,
 } as const;
 
-function land(b: Ball, y: number) {
-  const impact = b.vy;
-  b.y = y - b.r;
-  b.grounded = true;
-  b.dropping = false;
-  if (impact > PHYS.squishSpeed) b.squashV += Math.max(impact, 180) * PHYS.squashKick;
-  b.vy = impact > PHYS.restSpeed ? -impact * PHYS.restitution : 0;
-}
-
-function collideBalls(a: Ball, b: Ball) {
-  const dx = b.x - a.x;
-  const dy = b.y - a.y;
-  const min = a.r + b.r;
-  const d2 = dx * dx + dy * dy;
-  if (d2 >= min * min || d2 === 0) return;
-  const d = Math.sqrt(d2);
-  const nx = dx / d;
-  const ny = dy / d;
-  const push = (min - d) / 2;
-  a.x -= nx * push;
-  a.y -= ny * push;
-  b.x += nx * push;
-  b.y += ny * push;
-  const rel = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
-  if (rel >= 0) return;
-  const j = (-(1 + PHYS.restitution) * rel) / 2; // equal masses
-  a.vx -= j * nx;
-  a.vy -= j * ny;
-  b.vx += j * nx;
-  b.vy += j * ny;
-  const kick = Math.abs(rel) * PHYS.squashKick * 0.4;
-  a.squashV += kick;
-  b.squashV += kick;
-}
-
-function substep(balls: Ball[], floors: Floor[], view: View, dt: number) {
-  const screenFloor = view.top + view.height - PHYS.screenMargin;
-
-  for (const b of balls) {
-    const prevBottom = b.y + b.r;
-    b.vy = Math.min(b.vy + PHYS.gravity * dt, PHYS.maxSpeed);
-    b.x += b.vx * dt;
-    b.y += b.vy * dt;
-    b.grounded = false;
-
-    // One-way floors: only catch a ball that was above the floor's top edge on the previous step.
-    let support: Floor | null = null;
-    let overhang = 0;
-    for (const f of floors) {
-      if (b.dropping && f.drain) continue;
-      const over = b.x < f.x0 ? f.x0 - b.x : b.x > f.x1 ? b.x - f.x1 : 0;
-      if (over > b.r * 0.85) continue;
-      if (b.vy >= 0 && prevBottom <= f.y + Math.max(3, b.r * 0.35) && b.y + b.r >= f.y) {
-        land(b, f.y);
-        support = f;
-        overhang = b.x < f.x0 ? -over : over;
-      }
-    }
-
-    if (support) {
-      // Past the edge: tip over the corner.
-      if (overhang !== 0) b.vx += (overhang / b.r) * PHYS.gravity * 0.9 * dt;
-      // Draining floor: roll toward the nearer edge.
-      else if (support.drain) b.vx += (b.x >= (support.x0 + support.x1) / 2 ? 1 : -1) * PHYS.drainAccel * dt;
-    }
-
-    // The viewport bottom is solid; when the reader scrolls up it lifts the balls with it.
-    if (b.y + b.r > screenFloor) {
-      if (b.vy > 0) land(b, screenFloor);
-      else b.y = screenFloor - b.r;
-    }
-    // A ball left above the viewport re-enters at the top edge and falls (one-way floors let it pass).
-    if (b.y + b.r < view.top) {
-      b.y = view.top - b.r + 1;
-      b.vy = Math.max(b.vy, 0);
-    }
-
-    if (b.x < b.r) {
-      b.x = b.r;
-      b.vx = Math.abs(b.vx) * PHYS.wallRestitution;
-    } else if (b.x > view.width - b.r) {
-      b.x = view.width - b.r;
-      b.vx = -Math.abs(b.vx) * PHYS.wallRestitution;
-    }
-
-    if (b.grounded) {
-      b.vx *= Math.exp(-PHYS.rollFriction * dt);
-      b.spin = b.vx / b.r;
-    } else {
-      b.spin *= Math.exp(-0.4 * dt);
-    }
-    b.angle += b.spin * dt;
-
-    b.squashV += (-PHYS.squashK * b.squash - PHYS.squashC * b.squashV) * dt;
-    b.squash = Math.max(-0.25, Math.min(0.32, b.squash + b.squashV * dt));
+/** Sorts ledges into a route and merges ones that form a single surface (a row of cards, nested elements). */
+export function buildRoute(ledges: Ledge[], r: number): Ledge[] {
+  const out: Ledge[] = [];
+  for (const l of [...ledges].sort((a, b) => a.y - b.y || a.x0 - b.x0)) {
+    const same = out.find(
+      (o) => Math.abs(o.y - l.y) < r * 0.6 && l.x0 <= o.x1 + r * PHYS.mergeGap && l.x1 >= o.x0 - r * PHYS.mergeGap,
+    );
+    if (same) {
+      same.x0 = Math.min(same.x0, l.x0);
+      same.x1 = Math.max(same.x1, l.x1);
+      same.y = Math.min(same.y, l.y);
+    } else out.push({ ...l });
   }
-
-  for (let i = 0; i < balls.length; i++) for (let j = i + 1; j < balls.length; j++) collideBalls(balls[i], balls[j]);
+  return out;
 }
 
-/** Advance the simulation by `elapsed` seconds. Returns true if anything visibly moved. */
-export function step(balls: Ball[], floors: Floor[], view: View, elapsed: number) {
-  const before = balls.map((b) => b.x + b.y * 7 + b.squash * 1000);
-  let left = Math.min(elapsed, 1 / 20);
-  while (left > 1e-6) {
-    const dt = Math.min(PHYS.dt, left);
-    substep(balls, floors, view, dt);
-    left -= dt;
+/** Index of the ledge a ball with this anchor should be on, and how far along it (0..1) it should have rolled. */
+export function routeTarget(route: Ledge[], view: View, anchor: number) {
+  if (!route.length) return { index: -1, progress: 0 };
+  const s = view.top + anchor * view.height;
+  let i = 0;
+  while (i + 1 < route.length && route[i + 1].y <= s) i++;
+  // The ledge is about to slide under the navbar: move on as soon as the next one is on screen.
+  while (
+    i + 1 < route.length &&
+    route[i].y - view.top < PHYS.topMargin &&
+    route[i + 1].y - view.top < view.height - PHYS.bottomMargin
+  )
+    i++;
+  const next = route[i + 1];
+  const span = Math.max(Math.min(next ? next.y - route[i].y : view.height, anchor * view.height - PHYS.topMargin), 1);
+  return { index: i, progress: Math.min(Math.max((s - route[i].y) / span, 0), 1) };
+}
+
+/** The range a ball's centre can roll over on a ledge (a single point on ledges narrower than the ball). */
+export function rollRange(l: Ledge, r: number): [number, number] {
+  const a = l.x0 + r * 0.6;
+  const b = l.x1 - r * 0.6;
+  return a <= b ? [a, b] : [(l.x0 + l.x1) / 2, (l.x0 + l.x1) / 2];
+}
+
+/**
+ * The edge a ball leaves ledge `l` by on its way to `next`: the end closer to the next ledge, or, when the next ledge
+ * is under both ends (stacked cards), the end opposite where it came in, so it rolls across — unless that is further
+ * than `budget` px (how far it can roll in the scroll it has on this ledge), or the ball has fallen behind the reader
+ * (`hurry`): then it takes the nearer end.
+ */
+export function exitEdge(l: Ledge, next: Ledge, entryX: number, r: number, budget: number, hurry = false) {
+  const gap = (x: number) => (x < next.x0 ? next.x0 - x : x > next.x1 ? x - next.x1 : 0);
+  const left = gap(l.x0);
+  const right = gap(l.x1);
+  const near = entryX - l.x0 < l.x1 - entryX ? l.x0 : l.x1;
+  if (Math.abs(left - right) < r) {
+    const far = near === l.x0 ? l.x1 : l.x0;
+    return hurry || Math.abs(far - entryX) > budget ? near : far;
   }
-  return balls.some((b, i) => Math.abs(b.x + b.y * 7 + b.squash * 1000 - before[i]) > 0.05);
+  return left < right ? l.x0 : l.x1;
 }
 
-/** Marks floors in the top part of the viewport as draining. Floors with `hold` never drain (pillars before scrolling). */
-export function updateDrain(floors: (Floor & { hold?: boolean })[], view: View) {
-  for (const f of floors) f.drain = !f.hold && f.y - view.top < view.height * PHYS.drainLine;
+/**
+ * The ledge after `k` a ball should go to: the next one, unless it is off to the side while another ledge just below
+ * sits right under this one (multi-column layouts). Then the ball stays in its column; the other balls, which are
+ * elsewhere on the page, pick up the side column.
+ */
+export function nextLedge(route: Ledge[], k: number, view: View) {
+  const l = route[k];
+  const first = route[k + 1];
+  const apart = (o: Ledge) => (o.x1 < l.x0 ? l.x0 - o.x1 : o.x0 > l.x1 ? o.x0 - l.x1 : 0);
+  if (!first || apart(first) < view.width * 0.08) return k + 1;
+  for (let n = k + 2; n < route.length && route[n].y - first.y < view.height * 0.25; n++) {
+    if (apart(route[n]) < view.width * 0.08) return n;
+  }
+  return k + 1;
+}
+
+/** Where a ball rolling off at `fromX` (moving in `dir`) lands on `next`: a little past the edge, kept on the ledge. */
+export function landingX(next: Ledge, fromX: number, dir: number, r: number) {
+  const [a, b] = rollRange(next, r);
+  return Math.min(Math.max(fromX + dir * r * 0.8, a), b);
+}
+
+/**
+ * A hop from (x0, y0) to (x1, y1): a plain drop when going down, an arc when going sideways or up. `boost` > 1 makes
+ * it quicker, for a ball catching up with the reader.
+ */
+export function planFlight(x0: number, y0: number, x1: number, y1: number, boost = 1): Flight {
+  const dx = x1 - x0;
+  const dy = y1 - y0;
+  const g = PHYS.gravity * boost * boost;
+  const T = Math.max(Math.sqrt((2 * Math.max(dy, 0)) / g), Math.abs(dx) / (PHYS.hopSpeed * boost), PHYS.minHop / boost);
+  return { x0, y0, dx, vy0: (dy - (g * T * T) / 2) / T, T, g };
+}
+
+/** A bounce in place after a hard landing. */
+export function bounceFlight(x: number, y: number, impact: number, drift: number): Flight {
+  const vy0 = -impact * PHYS.restitution;
+  return { x0: x, y0: y, dx: drift, vy0, T: (-2 * vy0) / PHYS.gravity, g: PHYS.gravity };
+}
+
+/** Position on a flight at time t, plus vertical speed (for the landing squash). */
+export function flightAt(f: Flight, t: number) {
+  const k = Math.min(t, f.T);
+  return { x: f.x0 + (f.dx * k) / f.T, y: f.y0 + f.vy0 * k + (f.g * k * k) / 2, vy: f.vy0 + f.g * k };
+}
+
+/**
+ * Rolls a ball toward `targetX`, no faster than `maxSpeed`. It eases to a stop there, unless `brake` is false (rolling
+ * off an edge): then it keeps its speed to the end.
+ */
+export function rollToward(b: Ball, targetX: number, maxSpeed: number, dt: number, brake = true) {
+  const d = targetX - b.x;
+  const want = brake ? Math.max(-maxSpeed, Math.min(maxSpeed, d * 5)) : Math.sign(d) * maxSpeed;
+  b.vx += (want - b.vx) * Math.min(1, dt * PHYS.rollResponse);
+  const step = b.vx * dt;
+  // Don't overshoot the target.
+  b.x = Math.abs(step) > Math.abs(targetX - b.x) && Math.sign(step) === Math.sign(targetX - b.x) ? targetX : b.x + step;
+  b.angle += step / b.r;
+}
+
+/** Kicks the squash spring for a landing at `impact` px/s. */
+export function squish(b: Ball, impact: number) {
+  if (impact > 40) b.squashV += Math.max(impact, 180) * PHYS.squashKick;
+}
+
+/** Advances the squash spring (substepped: it is stiff). */
+export function stepSquash(b: Ball, dt: number) {
+  for (let left = dt; left > 1e-6; left -= 1 / 240) {
+    const h = Math.min(1 / 240, left);
+    b.squashV += (-PHYS.squashK * b.squash - PHYS.squashC * b.squashV) * h;
+    b.squash = Math.max(-0.25, Math.min(0.32, b.squash + b.squashV * h));
+  }
 }

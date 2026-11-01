@@ -38,7 +38,7 @@ function Dossier({ project, index }: { project: Project; index: number }) {
     <article data-ball-floor className="group relative overflow-hidden rounded-2xl border border-line bg-surface p-8 transition-colors duration-500 hover:border-white/25 hover:bg-surface-elevated md:p-12">
       <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
         <div className="space-y-6 lg:col-span-7">
-          <div className="flex flex-wrap items-center gap-2">
+          <div data-ball-floor className="flex flex-wrap items-center gap-2">
             <span className="mr-2 font-mono text-xs text-muted">{String(index + 1).padStart(2, "0")}</span>
             <Badge className="text-accent">{categoryLabel[project.category]}</Badge>
             {project.status === "in-progress" && <Badge>In progress</Badge>}
@@ -47,15 +47,15 @@ function Dossier({ project, index }: { project: Project; index: number }) {
             ))}
           </div>
 
-          <h3 className="text-2xl font-medium tracking-tight transition-colors group-hover:text-accent sm:text-4xl">
+          <h3 data-ball-floor className="text-2xl font-medium tracking-tight transition-colors group-hover:text-accent sm:text-4xl">
             {project.title} <span className="text-muted">— {project.subtitle}</span>
           </h3>
 
-          {project.summary && <p className="max-w-xl leading-relaxed font-light text-zinc-400">{project.summary}</p>}
+          {project.summary && <p data-ball-floor className="max-w-xl leading-relaxed font-light text-zinc-400">{project.summary}</p>}
 
           <ul className="max-w-xl space-y-2 text-sm text-zinc-400">
             {project.highlights.slice(0, 3).map((h) => (
-              <li key={h} className="flex gap-3">
+              <li key={h} data-ball-floor className="flex gap-3">
                 <span className="text-accent">/</span>
                 <span>{h}</span>
               </li>
@@ -63,7 +63,7 @@ function Dossier({ project, index }: { project: Project; index: number }) {
           </ul>
 
           {project.metrics && (
-            <div className="grid grid-cols-3 gap-4 border-t border-line pt-5 font-mono">
+            <div data-ball-floor className="grid grid-cols-3 gap-4 border-t border-line pt-5 font-mono">
               {project.metrics.map((m) => (
                 <div key={m.label}>
                   <span className="block text-[10px] text-muted uppercase">{m.label}</span>
@@ -74,7 +74,7 @@ function Dossier({ project, index }: { project: Project; index: number }) {
           )}
         </div>
 
-        <div className="relative flex h-72 flex-col justify-between overflow-hidden rounded-xl border border-line bg-background p-5 md:h-80 lg:col-span-5">
+        <div data-ball-floor className="relative flex h-72 flex-col justify-between overflow-hidden rounded-xl border border-line bg-background p-5 md:h-80 lg:col-span-5">
           <div className="flex justify-between border-b border-line pb-2 font-mono text-[10px] text-muted uppercase">
             <span>System Topology</span>
             <span className="text-emerald-400">{project.status === "in-progress" ? "Building" : "Shipped"}</span>
@@ -123,7 +123,7 @@ export function Work() {
       {archive.length > 0 && (
         <div className="mt-24">
           <Reveal>
-            <p className="label mb-6 text-muted">Archive</p>
+            <p data-ball-floor className="label mb-6 text-muted">Archive</p>
           </Reveal>
           <ul className="border-t border-line">
             {archive.map((p, i) => (
@@ -135,8 +135,8 @@ export function Work() {
                   <span data-ball-floor className="col-span-10 text-xl font-medium tracking-tight transition-colors group-hover:text-accent md:col-span-4">
                     {p.title}
                   </span>
-                  <span className="col-span-12 text-sm text-muted md:col-span-4">{p.subtitle}</span>
-                  <span className="col-span-12 font-mono text-[11px] text-muted uppercase md:col-span-3 md:text-right">
+                  <span data-ball-floor className="col-span-12 text-sm text-muted md:col-span-4">{p.subtitle}</span>
+                  <span data-ball-floor className="col-span-12 font-mono text-[11px] text-muted uppercase md:col-span-3 md:text-right">
                     {p.stack.join(" · ")}
                   </span>
                 </li>

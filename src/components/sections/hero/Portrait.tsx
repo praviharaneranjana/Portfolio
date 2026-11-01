@@ -12,7 +12,7 @@ export function Portrait() {
             alt={profile.name}
             fill
             sizes="(min-width: 768px) 22vw, 60vw"
-            className="object-cover grayscale transition duration-700 ease-out-expo group-hover:scale-[1.03] group-hover:grayscale-0"
+            className="object-cover object-[50%_18%] grayscale transition duration-700 ease-out-expo group-hover:scale-[1.03] group-hover:grayscale-0"
             priority
           />
         ) : (

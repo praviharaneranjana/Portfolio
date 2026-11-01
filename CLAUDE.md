@@ -15,7 +15,7 @@ Single-page, statically rendered portfolio. Next.js 16 App Router + TypeScript +
 - **Scroll reveals.** Use `Reveal` / `MaskLines` from `src/components/ui/Reveal.tsx`. Put `whileInView` on an unclipped element — IntersectionObserver ignores elements hidden by `overflow: hidden`.
 - **Realistic, not cartoon.** No toy vehicles, joysticks, game HUDs or bright UI glows in 3D. Materials need surface variation and environment reflections. See `docs/BLENDER.md` → "What makes it look real".
 - **Intro choreography.** Gate → pillars rise → copy → balls. Timings live in `intro` (`src/lib/gate.ts`); anything that waits for the gate uses `useGateOpen()` / `secondsSinceOpen()`.
-- **Ball ledges.** Add `data-ball-floor` to an element to let the rolling balls land on its top edge. Prefer headings/cards narrower than the page.
+- **Ball ledges.** Add `data-ball-floor` to new headings, paragraphs, list items and small cards so the rolling balls travel over them in order. Containers that hold other ledges are ignored. See `docs/3D.md` §3.
 - **Blender assets are generated.** Edit `blender/build_gate.py` and re-run it; never hand-edit `public/models/gate.glb`. Keep the node names listed in `docs/BLENDER.md`.
 - **Icons.** `lucide-react` v1 has no brand icons — LinkedIn/GitHub are inline SVGs in `src/components/ui/SocialIcon.tsx`.
 - Next.js 16 differs from older versions; check `node_modules/next/dist/docs/` before using unfamiliar APIs.

@@ -1,7 +1,7 @@
 export type SocialLink = {
   label: string;
   href: string;
-  icon: "github" | "linkedin" | "mail" | "phone" | "globe";
+  icon: "github" | "linkedin" | "facebook" | "instagram" | "mail" | "phone" | "globe";
 };
 
 export type Profile = {
@@ -23,6 +23,8 @@ export type Profile = {
     headlineMuted: string;
     headlineStrong: string;
     position: string;
+    /** Short label/value facts listed under the position in the hero row. */
+    facts: { label: string; value: string }[];
     intro: string[];
     badgeText: string;
   };

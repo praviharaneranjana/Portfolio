@@ -17,15 +17,15 @@ export function Capabilities() {
           <Reveal key={c.code} delay={i * 0.08} className="h-full">
             <div data-ball-floor className="flex h-full flex-col justify-between rounded-2xl border border-line bg-surface p-8 transition-colors duration-300 hover:border-accent/50">
               <div>
-                <span className="font-mono text-xs text-muted uppercase">
+                <span data-ball-floor className="block font-mono text-xs text-muted uppercase">
                   {c.code} / {c.domain}
                 </span>
-                <h3 className="mt-5 mb-3 text-xl font-medium tracking-tight">{c.title}</h3>
-                <p className="mb-8 text-sm leading-relaxed font-light text-zinc-400">{c.description}</p>
+                <h3 data-ball-floor className="mt-5 mb-3 text-xl font-medium tracking-tight">{c.title}</h3>
+                <p data-ball-floor className="mb-8 text-sm leading-relaxed font-light text-zinc-400">{c.description}</p>
               </div>
               <ul className="space-y-2 border-t border-line pt-5 font-mono text-[11px] text-zinc-400">
                 {c.items.map((item) => (
-                  <li key={item} className="flex gap-2">
+                  <li key={item} data-ball-floor className="flex gap-2">
                     <span className="text-accent">/</span>
                     {item}
                   </li>
@@ -38,12 +38,12 @@ export function Capabilities() {
 
       <div className="mt-20">
         <Reveal>
-          <p className="label mb-6 text-muted">Full toolkit</p>
+          <p data-ball-floor className="label mb-6 text-muted">Full toolkit</p>
         </Reveal>
         <dl className="border-t border-line">
           {skills.map((g, i) => (
             <Reveal key={g.title} delay={i * 0.04}>
-              <div className="grid grid-cols-1 gap-2 border-b border-line py-4 md:grid-cols-12">
+              <div data-ball-floor className="grid grid-cols-1 gap-2 border-b border-line py-4 md:grid-cols-12">
                 <dt className="font-mono text-[11px] tracking-wider text-muted uppercase md:col-span-3">{g.title}</dt>
                 <dd className="text-sm text-zinc-300 md:col-span-9">{g.items.join("  ·  ")}</dd>
               </div>

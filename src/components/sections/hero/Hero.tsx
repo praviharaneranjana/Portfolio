@@ -1,13 +1,21 @@
 "use client";
 
 import { heroCards, profile } from "@/content";
+import { siteConfig } from "@/config/site";
 import { HeroScene } from "@/components/canvas/HeroScene";
-import { MagneticBadge } from "@/components/ui/MagneticBadge";
+import { MagneticBadge, type BadgeLink } from "@/components/ui/MagneticBadge";
+import { SocialIcon } from "@/components/ui/SocialIcon";
 import { MaskLines, Reveal } from "@/components/ui/Reveal";
 import { intro, useGateOpen } from "@/lib/gate";
 import { FloatingCards } from "./FloatingCards";
 import { HeroDashboard } from "./HeroDashboard";
 import { Portrait } from "./Portrait";
+
+// The badge menu links to every visible section, plus the CV.
+const badgeLinks: BadgeLink[] = [
+  ...siteConfig.sections.filter((s) => s.enabled).map((s) => ({ label: s.label, href: `#${s.id}` })),
+  ...(profile.resumeUrl ? [{ label: "Download CV", href: profile.resumeUrl, download: true }] : []),
+];
 
 export function Hero() {
   const { hero } = profile;
@@ -27,7 +35,7 @@ export function Hero() {
 
       <div className="relative z-20 mx-auto w-full max-w-[1440px] px-6 pb-20 md:px-12">
         <Reveal trigger={gateOpen} delay={intro.text} className="mb-6 flex flex-wrap items-center gap-x-3 gap-y-2">
-          <span className="label text-muted">{hero.eyebrow}</span>
+          <span data-ball-floor className="label text-muted">{hero.eyebrow}</span>
           <span className="hidden h-px w-10 bg-white/15 sm:block" />
           <span className="label flex items-center gap-2 text-accent">
             <span className="size-1.5 animate-pulse rounded-full bg-accent" />
@@ -48,23 +56,35 @@ export function Hero() {
 
         <HeroDashboard trigger={gateOpen} />
 
-        <div data-ball-floor className="mt-14 grid grid-cols-1 items-start gap-10 border-t border-line pt-10 md:grid-cols-12">
-          <Reveal trigger={gateOpen} delay={intro.text + 0.3} className="max-w-[16rem] md:col-span-3">
+        <div data-ball-floor className="mt-14 grid grid-cols-1 items-start gap-10 border-t border-line pt-10 md:grid-cols-2 lg:grid-cols-12">
+          <Reveal trigger={gateOpen} delay={intro.text + 0.3} className="max-w-[16rem] lg:col-span-3">
             <Portrait />
           </Reveal>
 
-          <Reveal trigger={gateOpen} delay={intro.text + 0.4} className="font-mono text-xs leading-relaxed tracking-wider text-muted uppercase md:col-span-3">
-            {hero.position}
+          <Reveal trigger={gateOpen} delay={intro.text + 0.4} className="lg:col-span-4">
+            <p data-ball-floor className="font-mono text-xs leading-relaxed tracking-wider text-muted uppercase">
+              {hero.position}
+            </p>
+            <dl className="mt-6 border-t border-line">
+              {hero.facts.map((f) => (
+                <div key={f.label} data-ball-floor className="grid grid-cols-[6.5rem_1fr] gap-3 border-b border-line py-3">
+                  <dt className="font-mono text-[10px] tracking-wider text-muted uppercase">{f.label}</dt>
+                  <dd className="text-sm leading-snug text-zinc-300">{f.value}</dd>
+                </div>
+              ))}
+            </dl>
           </Reveal>
 
-          <Reveal trigger={gateOpen} delay={intro.text + 0.5} className="space-y-4 font-light text-zinc-300 md:col-span-4">
-            <p className="text-base leading-relaxed">{hero.intro[0]}</p>
+          <Reveal trigger={gateOpen} delay={intro.text + 0.5} className="space-y-4 font-light text-zinc-300 lg:col-span-3">
+            <p data-ball-floor className="text-base leading-relaxed">
+              {hero.intro[0]}
+            </p>
             {hero.intro.slice(1).map((p) => (
-              <p key={p} className="text-sm leading-relaxed text-muted">
+              <p key={p} data-ball-floor className="text-sm leading-relaxed text-muted">
                 {p}
               </p>
             ))}
-            <div className="flex flex-wrap gap-5 pt-3 font-mono text-[11px] tracking-widest uppercase">
+            <div data-ball-floor className="flex flex-wrap gap-5 pt-3 font-mono text-[11px] tracking-widest uppercase">
               <a href="#work" className="border-b border-white/30 pb-1 text-foreground transition-colors hover:border-accent hover:text-accent">
                 View work ↓
               </a>
@@ -74,10 +94,26 @@ export function Hero() {
                 </a>
               )}
             </div>
+            <ul data-ball-floor className="flex flex-wrap gap-2 pt-2" aria-label="Elsewhere">
+              {profile.socials.map((s) => (
+                <li key={s.label}>
+                  <a
+                    href={s.href}
+                    target={s.href.startsWith("http") ? "_blank" : undefined}
+                    rel="noreferrer"
+                    aria-label={s.label}
+                    title={s.label}
+                    className="flex size-10 items-center justify-center rounded-full border border-line bg-white/[0.03] text-muted transition-colors hover:border-accent hover:text-accent"
+                  >
+                    <SocialIcon icon={s.icon} className="size-4" />
+                  </a>
+                </li>
+              ))}
+            </ul>
           </Reveal>
 
-          <Reveal trigger={gateOpen} delay={intro.text + 0.6} className="flex md:col-span-2 md:justify-end">
-            <MagneticBadge href="#contact" text={hero.badgeText} />
+          <Reveal trigger={gateOpen} delay={intro.text + 0.6} className="flex lg:col-span-2 lg:justify-end">
+            <MagneticBadge text={hero.badgeText} links={badgeLinks} />
           </Reveal>
         </div>
       </div>

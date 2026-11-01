@@ -93,6 +93,7 @@ export function HeroDashboard({ trigger = true }: { trigger?: boolean }) {
               {METRICS.map((m) => (
                 <div
                   key={m.label}
+                  data-ball-floor
                   className="group rounded-xl border border-line/60 bg-white/[0.02] p-3.5 transition-colors hover:border-accent/40 hover:bg-white/[0.04]"
                 >
                   <span className="block font-mono text-[10px] tracking-wider text-muted uppercase">{m.label}</span>
@@ -117,6 +118,7 @@ export function HeroDashboard({ trigger = true }: { trigger?: boolean }) {
               {RUNTIMES.map((r) => (
                 <div
                   key={r.name}
+                  data-ball-floor
                   className="rounded-xl border border-line/60 bg-white/[0.02] p-3.5 transition-colors hover:border-line"
                 >
                   <div className="flex items-center justify-between">

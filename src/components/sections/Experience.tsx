@@ -12,24 +12,24 @@ export function Experience() {
         <Reveal key={job.company + job.period}>
           <article className="grid grid-cols-1 gap-10 lg:grid-cols-12">
             <div className="space-y-2 font-mono text-xs tracking-wider text-muted uppercase lg:col-span-3">
-              <p className="text-foreground">{job.period}</p>
-              <p>{job.location}</p>
-              {job.note && <p className="pt-2 text-[10px] leading-relaxed normal-case">{job.note}</p>}
+              <p data-ball-floor className="text-foreground">{job.period}</p>
+              <p data-ball-floor>{job.location}</p>
+              {job.note && <p data-ball-floor className="pt-2 text-[10px] leading-relaxed normal-case">{job.note}</p>}
             </div>
 
             <div className="lg:col-span-6">
               <h3 data-ball-floor className="text-3xl font-medium tracking-tight">{job.role}</h3>
-              <p className="mt-1 text-lg text-muted">{job.company}</p>
-              {job.project && <p className="mt-6 border-l border-accent pl-4 text-sm text-zinc-300">{job.project}</p>}
+              <p data-ball-floor className="mt-1 text-lg text-muted">{job.company}</p>
+              {job.project && <p data-ball-floor className="mt-6 border-l border-accent pl-4 text-sm text-zinc-300">{job.project}</p>}
               <ul className="mt-8 space-y-3 text-[15px] leading-relaxed font-light text-zinc-400">
                 {job.highlights.map((h) => (
-                  <li key={h} className="flex gap-3">
+                  <li key={h} data-ball-floor className="flex gap-3">
                     <span className="font-mono text-accent">/</span>
                     <span>{h}</span>
                   </li>
                 ))}
               </ul>
-              <div className="mt-8 flex flex-wrap gap-2">
+              <div data-ball-floor className="mt-8 flex flex-wrap gap-2">
                 {job.stack.map((t) => (
                   <Badge key={t}>{t}</Badge>
                 ))}

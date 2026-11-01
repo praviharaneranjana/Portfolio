@@ -7,13 +7,13 @@ export function Education() {
       {education.map((e) => (
         <Reveal key={e.degree}>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
-            <p className="label text-accent md:col-span-3">04 // Education</p>
+            <p data-ball-floor className="label text-accent md:col-span-3">04 // Education</p>
             <div className="md:col-span-6">
               <h3 data-ball-floor className="text-2xl font-medium tracking-tight md:text-3xl">{e.degree}</h3>
-              <p className="mt-1 text-muted">{e.institution}</p>
-              <p className="mt-5 text-sm leading-relaxed text-zinc-400">{e.modules.join(" · ")}</p>
+              <p data-ball-floor className="mt-1 text-muted">{e.institution}</p>
+              <p data-ball-floor className="mt-5 text-sm leading-relaxed text-zinc-400">{e.modules.join(" · ")}</p>
             </div>
-            <p className="font-mono text-xs tracking-wider text-muted uppercase md:col-span-3 md:text-right">{e.period}</p>
+            <p data-ball-floor className="font-mono text-xs tracking-wider text-muted uppercase md:col-span-3 md:text-right">{e.period}</p>
           </div>
         </Reveal>
       ))}
