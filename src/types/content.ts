@@ -62,6 +62,21 @@ export type Project = {
   pipeline?: string[];
   links?: { label: string; href: string }[];
   image?: string;
+  /** Real screenshots. Featured cards show them in browser and phone frames instead of the pipeline. */
+  screens?: {
+    desktop: Screenshot[];
+    mobile: Screenshot[];
+    /** "grid" (default) lists the extra screens; "tour" shows every desktop screen in one switchable browser window. */
+    layout?: "grid" | "tour";
+  };
+};
+
+export type Screenshot = {
+  /** Path under /public. Desktop shots are 16:10, mobile shots are 390:844. */
+  src: string;
+  alt: string;
+  /** Short caption, e.g. "Pricing". */
+  label: string;
 };
 
 export type Capability = {
