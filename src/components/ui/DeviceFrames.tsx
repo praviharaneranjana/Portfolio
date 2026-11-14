@@ -20,16 +20,41 @@ export function BrowserWindow({ url, className, children }: { url?: string; clas
   );
 }
 
-export function BrowserFrame({ shot, url, sizes, className }: { shot: Screenshot; url?: string; sizes: string; className?: string }) {
+export function BrowserFrame({
+  shot,
+  url,
+  sizes,
+  className,
+  preload,
+}: {
+  shot: Screenshot;
+  url?: string;
+  sizes: string;
+  className?: string;
+  preload?: boolean;
+}) {
   return (
     <BrowserWindow url={url} className={className}>
-      <Image src={shot.src} alt={shot.alt} fill sizes={sizes} className="object-cover object-top" />
+      <Image src={shot.src} alt={shot.alt} fill sizes={sizes} preload={preload} className="object-cover object-top" />
     </BrowserWindow>
   );
 }
 
 /** A modern phone: thin dark bezel, rounded screen and a small island. */
-export function PhoneFrame({ shot, sizes, className }: { shot: Screenshot; sizes: string; className?: string }) {
+export function PhoneFrame({
+  shot,
+  sizes,
+  className,
+  preload,
+  aspect = "390/844",
+}: {
+  shot: Screenshot;
+  sizes: string;
+  className?: string;
+  preload?: boolean;
+  /** Screen aspect ratio as "width/height". */
+  aspect?: string;
+}) {
   return (
     <figure
       className={cn(
@@ -42,8 +67,8 @@ export function PhoneFrame({ shot, sizes, className }: { shot: Screenshot; sizes
         <div className="relative pt-[11%]">
           <span className="absolute top-1/2 left-1/2 h-[42%] w-[30%] -translate-1/2 rounded-full bg-[#1b1c1f]" />
         </div>
-        <div className="relative aspect-[390/844]">
-          <Image src={shot.src} alt={shot.alt} fill sizes={sizes} className="object-cover object-top" />
+        <div className="relative" style={{ aspectRatio: aspect }}>
+          <Image src={shot.src} alt={shot.alt} fill sizes={sizes} preload={preload} className="object-cover object-top" />
         </div>
       </div>
     </figure>

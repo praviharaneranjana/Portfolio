@@ -13,7 +13,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
  * Every desktop screen in one browser window. A page list (chips on small screens, a rail from lg up)
  * switches the window, and the screens crossfade so the frame never jumps.
  */
-export function ScreenTour({ shots, url }: { shots: Screenshot[]; url?: string }) {
+export function ScreenTour({ shots, url, label }: { shots: Screenshot[]; url?: string; label: string }) {
   const [active, setActive] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -54,9 +54,9 @@ export function ScreenTour({ shots, url }: { shots: Screenshot[]; url?: string }
         <div
           ref={listRef}
           role="tablist"
-          aria-label="Admin panel screens"
+          aria-label={label}
           onKeyDown={onKeyDown}
-          className="relative -mx-8 flex gap-2 overflow-x-auto px-8 pb-1 [scrollbar-width:none] md:-mx-12 md:px-12 lg:mx-0 lg:flex-col lg:gap-0 lg:overflow-visible lg:border-l lg:border-line lg:px-0 lg:pb-0"
+          className="relative -mx-6 flex gap-2 overflow-x-auto px-6 pb-1 [scrollbar-width:none] md:-mx-12 md:px-12 lg:mx-0 lg:flex-col lg:gap-0 lg:overflow-visible lg:border-l lg:border-line lg:px-0 lg:pb-0"
         >
           {shots.map((shot, i) => {
             const selected = i === active;

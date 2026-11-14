@@ -62,13 +62,30 @@ export type Project = {
   pipeline?: string[];
   links?: { label: string; href: string }[];
   image?: string;
-  /** Real screenshots. Featured cards show them in browser and phone frames instead of the pipeline. */
+  /**
+   * Real screenshots. The landing card shows the first desktop and mobile shot; any project with screens also gets
+   * its own page at /work/<slug> with every screen.
+   */
   screens?: {
     desktop: Screenshot[];
     mobile: Screenshot[];
-    /** "grid" (default) lists the extra screens; "tour" shows every desktop screen in one switchable browser window. */
-    layout?: "grid" | "tour";
   };
+  /** More screen sets on the project page, after the main screens: user guides, in-app screens and so on. */
+  galleries?: Gallery[];
+  /** "How it works" notes on the project page: short titled paragraphs about the architecture. */
+  details?: { title: string; body: string }[];
+};
+
+export type Gallery = {
+  /** Short section label, e.g. "Guides". */
+  label: string;
+  title: string;
+  description?: string;
+  /** Desktop shots play in a switchable browser window; mobile shots scroll sideways in phone frames. */
+  device: "desktop" | "mobile";
+  shots: Screenshot[];
+  /** Screen aspect ratio for mobile shots that aren't 390:844, e.g. "540/1180". */
+  aspect?: string;
 };
 
 export type Screenshot = {
