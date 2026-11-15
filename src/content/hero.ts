@@ -1,4 +1,26 @@
-import type { CodeCard } from "@/types/content";
+import type { CodeCard, HeroPanel } from "@/types/content";
+
+// The 3D panel under the hero headline. Figures come straight from the CV (see experience.ts and projects.ts).
+export const heroPanel: HeroPanel = {
+  results: [
+    {
+      value: "84–95%",
+      label: "Less query load",
+      detail: "Heavy dashboard queries rewritten as SQL aggregations",
+      highlight: true,
+    },
+    { value: "3 → 0", label: "Out-of-memory crashes", detail: "Found and fixed before release" },
+    { value: "~130", label: "Pages moved to React", detail: "From Bootstrap/Blade, via Inertia.js" },
+    { value: "0.73", label: "ROC-AUC, no-show model", detail: "XGBoost with SHAP explanations" },
+  ],
+  stack: [
+    { name: "C# · ASP.NET", area: "Backend", detail: "REST APIs on SQL Server, as in the Auctinier auction system" },
+    { name: "Laravel · React", area: "SaaS at Factum", detail: "Multi-tenant Operate, MySQL, Redis, Inertia.js" },
+    { name: "Python · FastAPI", area: "Applied AI", detail: "XGBoost, SHAP and the Gemini API in SHAI" },
+    { name: "Unity · C#", area: "Learning", detail: "Mobile game prototypes, newly started" },
+  ],
+  availability: "Open to Junior Software Engineer (.NET) roles, freelance projects and game-dev collaborations.",
+};
 
 // Floating editor cards around the hero sculpture (desktop only). Keep snippets short — 4–7 lines.
 export const heroCards: CodeCard[] = [
@@ -23,12 +45,12 @@ public async Task<Result> PlaceAsync(Bid bid)
   {
     id: "operate",
     kind: "metrics",
-    title: "Operate // Dashboard",
-    badge: "Prod",
+    title: "Operate dashboard",
+    badge: "Factum",
     metrics: [
-      { label: "Query load", value: "−95%" },
+      { label: "Query load cut", value: "84–95%" },
       { label: "OOM crashes", value: "3 → 0" },
-      { label: "Pages → React", value: "~130" },
+      { label: "Pages to React", value: "~130" },
     ],
     position: { top: "9rem", right: "3.5%" },
     width: "17rem",
@@ -52,7 +74,7 @@ public async Task<Result> PlaceAsync(Bid bid)
   {
     id: "shai",
     kind: "pipeline",
-    title: "No-show risk // SHAI",
+    title: "SHAI no-show risk",
     badge: "AUC 0.73",
     steps: ["Features", "XGBoost", "SHAP"],
     position: { top: "40vh", left: "13%" },

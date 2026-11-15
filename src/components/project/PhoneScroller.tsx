@@ -97,7 +97,7 @@ export function PhoneScroller({ shots, label, aspect }: { shots: Screenshot[]; l
                   i === active ? "opacity-100" : "opacity-80",
                 )}
               />
-              <p className="mt-4 flex items-baseline justify-center gap-2 font-mono text-[10px] uppercase">
+              <p className="mt-4 flex items-baseline justify-center gap-2 font-mono text-xs">
                 <span className="text-muted/60">{pad(i + 1)}</span>
                 <span className="text-muted">{shot.label}</span>
               </p>
@@ -122,7 +122,7 @@ export function PhoneScroller({ shots, label, aspect }: { shots: Screenshot[]; l
       </div>
 
       <div className="mt-6 flex items-center justify-between gap-4 border-t border-line pt-5">
-        <p className="font-mono text-[10px] text-muted uppercase">
+        <p className="font-mono text-xs text-muted tabular-nums">
           <span className="text-foreground">{pad(active + 1)}</span> / {pad(shots.length)}
           <span className="ml-4 hidden md:inline">Drag or use the arrows</span>
           <span className="ml-4 md:hidden">Swipe to see more</span>

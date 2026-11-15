@@ -44,15 +44,15 @@ function ProjectCard({ project, index, wide }: { project: Project; index: number
       data-ball-floor
       className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-surface transition-colors duration-500 hover:border-white/20 hover:bg-surface-elevated"
     >
-      <div className="relative border-b border-line bg-background px-5 pt-6 pb-5 sm:px-7">
+      <div className="relative border-b border-line bg-background p-6 sm:px-8">
         <div className="bg-grid absolute inset-0 opacity-60" />
         <div className={`relative flex items-center justify-center ${caseStudy ? "" : "min-h-36 sm:min-h-44"}`}>
           {caseStudy ? <Screens project={caseStudy} wide={wide} /> : project.pipeline && <Pipeline steps={project.pipeline} />}
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col p-5 sm:p-7">
-        <p className="flex flex-wrap items-center gap-x-2 font-mono text-[11px] tracking-wider text-muted uppercase">
+      <div className="flex flex-1 flex-col p-6 sm:p-8">
+        <p className="flex flex-wrap items-center gap-x-2 font-mono text-xs text-muted tabular-nums">
           <span>{pad(index + 1)}</span>
           <span className="text-accent">{categoryLabel[project.category]}</span>
           {project.status && <span>· {statusLabel[project.status]}</span>}
@@ -73,14 +73,14 @@ function ProjectCard({ project, index, wide }: { project: Project; index: number
         </h3>
         <p className="mt-1 text-sm text-muted">{project.subtitle}</p>
 
-        {project.summary && <p data-ball-floor className="mt-4 text-[15px] leading-relaxed font-light text-zinc-400">{project.summary}</p>}
+        {project.summary && <p data-ball-floor className="mt-4 text-[15px] leading-relaxed text-secondary">{project.summary}</p>}
 
         {project.metrics && (
           <dl data-ball-floor className="mt-5 grid grid-cols-3 gap-3 border-t border-line pt-4">
             {project.metrics.map((m) => (
               <div key={m.label}>
-                <dt className="font-mono text-[10px] leading-tight tracking-wide text-muted uppercase">{m.label}</dt>
-                <dd className="mt-1 text-lg tracking-tight text-foreground">{m.value}</dd>
+                <dt className="text-xs leading-snug text-muted">{m.label}</dt>
+                <dd className="mt-1 text-lg font-medium tracking-tight text-foreground tabular-nums">{m.value}</dd>
               </div>
             ))}
           </dl>
@@ -93,7 +93,7 @@ function ProjectCard({ project, index, wide }: { project: Project; index: number
               What I built
               <span className="text-accent transition-transform duration-300 group-open/more:rotate-45">+</span>
             </summary>
-            <ul className="mt-3 space-y-2 leading-relaxed text-zinc-400">
+            <ul className="mt-3 space-y-2 leading-relaxed text-secondary">
               {project.highlights.map((h) => (
                 <li key={h} className="flex gap-3">
                   <span className="text-accent">/</span>
@@ -104,7 +104,7 @@ function ProjectCard({ project, index, wide }: { project: Project; index: number
           </details>
         )}
 
-        <div className="mt-auto flex items-center justify-between gap-4 pt-6 font-mono text-[11px] tracking-wide text-muted uppercase">
+        <div className="mt-auto flex items-center justify-between gap-4 pt-6 text-[13px] text-muted">
           <span className="truncate">
             {project.stack.slice(0, 3).join(" · ")}
             {extraStack > 0 && ` +${extraStack}`}
@@ -140,7 +140,7 @@ export function Work() {
       <SectionHeader
         index="01"
         label="Selected Work"
-        title="Things I've built."
+        title="Things I've built"
         aside="Cards with screenshots open a full project page. The others are short summaries."
       />
 
@@ -156,7 +156,7 @@ export function Work() {
       {archive.length > 0 && (
         <div className="mt-20">
           <Reveal>
-            <p data-ball-floor className="label mb-4 text-muted">Older projects</p>
+            <p data-ball-floor className="mb-4 text-sm text-muted">Older projects</p>
           </Reveal>
           <ul className="border-t border-line">
             {archive.map((p, i) => (
@@ -169,7 +169,7 @@ export function Work() {
                   <span data-ball-floor className="col-start-2 text-sm text-muted md:col-span-4 md:col-start-auto">
                     {p.subtitle}
                   </span>
-                  <span className="col-start-2 font-mono text-[11px] text-muted uppercase md:col-span-3 md:col-start-auto md:text-right">
+                  <span className="col-start-2 text-[13px] text-muted md:col-span-3 md:col-start-auto md:text-right">
                     {p.stack.join(" · ")}
                   </span>
                 </li>

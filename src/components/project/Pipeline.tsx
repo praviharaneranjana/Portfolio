@@ -7,13 +7,13 @@ export function Pipeline({ steps }: { steps: string[] }) {
           <span
             className={
               i === steps.length - 1
-                ? "rounded-md border border-accent/40 bg-accent/10 px-2.5 py-2 font-mono text-[10px] text-accent uppercase"
-                : "rounded-md border border-line bg-surface px-2.5 py-2 font-mono text-[10px] text-zinc-300 uppercase"
+                ? "rounded-md border border-accent/30 bg-accent/10 px-3 py-2 font-mono text-xs text-accent"
+                : "rounded-md border border-line bg-surface px-3 py-2 font-mono text-xs text-secondary"
             }
           >
             {s}
           </span>
-          {i < steps.length - 1 && <span className="h-px w-5 bg-gradient-to-r from-white/30 to-accent/60" />}
+          {i < steps.length - 1 && <span className="h-px w-5 bg-white/20" />}
         </div>
       ))}
     </div>

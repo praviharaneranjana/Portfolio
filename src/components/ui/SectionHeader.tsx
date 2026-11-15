@@ -9,12 +9,12 @@ export function SectionHeader({ index, label, title, aside }: { index: string; l
             {`${index} // ${label}`}
           </p>
         </Reveal>
-        <h2 data-ball-floor className="mt-3 text-4xl font-medium tracking-tight md:text-6xl">
+        <h2 data-ball-floor className="mt-4 text-4xl leading-[1.1] font-medium tracking-[-0.02em] md:text-6xl md:tracking-[-0.03em]">
           <MaskLines lines={[{ text: title }]} />
         </h2>
       </div>
       {aside && (
-        <Reveal delay={0.15} className="max-w-sm font-mono text-sm leading-relaxed text-muted">
+        <Reveal delay={0.15} className="max-w-sm text-[15px] leading-relaxed text-secondary">
           <p data-ball-floor>{aside}</p>
         </Reveal>
       )}

@@ -8,7 +8,7 @@ export function TerminalSection() {
       <SectionHeader
         index="05"
         label="Interactive"
-        title="Or use the terminal."
+        title="Or use the terminal"
         aside="Everything on this page, as commands. Type help to see them."
       />
       <Reveal>

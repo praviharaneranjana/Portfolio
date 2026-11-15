@@ -12,7 +12,7 @@ export function BrowserWindow({ url, className, children }: { url?: string; clas
         <span className="size-1.5 rounded-full bg-white/20 md:size-2" />
         <span className="size-1.5 rounded-full bg-white/20 md:size-2" />
         {url && (
-          <span className="mx-auto truncate rounded-full bg-white/[0.05] px-3 py-0.5 font-mono text-[9px] text-muted">{url}</span>
+          <span className="mx-auto truncate rounded-full bg-white/[0.05] px-3 py-0.5 font-mono text-[10px] text-muted md:text-[11px]">{url}</span>
         )}
       </div>
       <div className="relative aspect-[16/10] overflow-hidden bg-background">{children}</div>

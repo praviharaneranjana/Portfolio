@@ -6,22 +6,22 @@ import { Badge } from "@/components/ui/Badge";
 export function Experience() {
   return (
     <section id="experience" className="mx-auto max-w-[1440px] scroll-mt-20 border-b border-line px-6 py-20 md:px-12 md:py-28">
-      <SectionHeader index="02" label="Experience" title="Where I work." />
+      <SectionHeader index="02" label="Experience" title="Where I work" />
 
       {experience.map((job) => (
         <Reveal key={job.company + job.period}>
           <article className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
-            <div className="space-y-2 font-mono text-xs tracking-wider text-muted uppercase lg:col-span-3">
-              <p data-ball-floor className="text-foreground">{job.period}</p>
+            <div className="space-y-1 text-sm text-muted lg:col-span-3">
+              <p data-ball-floor className="font-medium text-foreground tabular-nums">{job.period}</p>
               <p data-ball-floor>{job.location}</p>
-              {job.note && <p data-ball-floor className="pt-2 text-[10px] leading-relaxed normal-case">{job.note}</p>}
+              {job.note && <p data-ball-floor className="pt-3 text-[13px] leading-relaxed">{job.note}</p>}
             </div>
 
             <div className="lg:col-span-6">
-              <h3 data-ball-floor className="text-3xl font-medium tracking-tight">{job.role}</h3>
+              <h3 data-ball-floor className="text-3xl font-medium tracking-[-0.02em]">{job.role}</h3>
               <p data-ball-floor className="mt-1 text-lg text-muted">{job.company}</p>
-              {job.project && <p data-ball-floor className="mt-6 border-l border-accent pl-4 text-sm text-zinc-300">{job.project}</p>}
-              <ul className="mt-8 space-y-3 text-[15px] leading-relaxed font-light text-zinc-400">
+              {job.project && <p data-ball-floor className="mt-6 border-l border-accent pl-4 text-sm leading-relaxed text-secondary">{job.project}</p>}
+              <ul className="mt-8 space-y-3 text-[15px] leading-relaxed text-secondary">
                 {job.highlights.map((h) => (
                   <li key={h} data-ball-floor className="flex gap-3">
                     <span className="font-mono text-accent">/</span>
@@ -39,9 +39,9 @@ export function Experience() {
             {job.metrics && (
               <div className="grid grid-cols-3 gap-4 self-start lg:col-span-3 lg:grid-cols-1">
                 {job.metrics.map((m) => (
-                  <div key={m.label} data-ball-floor className="rounded-xl border border-line bg-surface p-4 md:p-5">
-                    <p className="text-2xl font-medium tracking-tight md:text-4xl">{m.value}</p>
-                    <p className="mt-1 font-mono text-[10px] tracking-wider text-muted uppercase">{m.label}</p>
+                  <div key={m.label} data-ball-floor className="rounded-xl border border-line bg-surface p-5">
+                    <p className="text-2xl font-medium tracking-tight tabular-nums md:text-4xl">{m.value}</p>
+                    <p className="mt-2 text-[13px] text-muted">{m.label}</p>
                   </div>
                 ))}
               </div>

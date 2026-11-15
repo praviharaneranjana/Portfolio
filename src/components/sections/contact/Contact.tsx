@@ -1,4 +1,4 @@
-import { profile } from "@/content";
+import { heroPanel, profile } from "@/content";
 import { MaskLines, Reveal } from "@/components/ui/Reveal";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { ContactForm } from "./ContactForm";
@@ -15,34 +15,34 @@ export function Contact() {
           <h2 data-ball-floor className="text-5xl leading-[1.05] font-medium tracking-[-0.03em] md:text-7xl">
             <MaskLines lines={[{ text: "Hiring, or have", className: "text-muted" }, { text: "a project in mind?" }]} />
           </h2>
-          <Reveal delay={0.2} className="max-w-md leading-relaxed font-light text-zinc-400">
-            <p data-ball-floor>Open to Junior Software Engineer (.NET) roles, freelance projects and game-dev collaborations.</p>
+          <Reveal delay={0.2} className="max-w-md text-lg leading-relaxed text-secondary">
+            <p data-ball-floor>{heroPanel.availability}</p>
           </Reveal>
 
           <Reveal delay={0.25} className="space-y-3">
-            <a href={`mailto:${profile.email}`} data-ball-floor className="group flex items-center gap-3 text-lg hover:text-accent">
-              <SocialIcon icon="mail" className="size-5 text-muted group-hover:text-accent" /> {profile.email}
+            <a href={`mailto:${profile.email}`} data-ball-floor className="group flex items-center gap-3 text-lg transition-colors duration-150 hover:text-accent">
+              <SocialIcon icon="mail" className="size-5 text-muted transition-colors duration-150 group-hover:text-accent" /> {profile.email}
             </a>
             {profile.phone && (
-              <a href={`tel:${profile.phone.replace(/\s/g, "")}`} data-ball-floor className="group flex items-center gap-3 text-lg hover:text-accent">
-                <SocialIcon icon="phone" className="size-5 text-muted group-hover:text-accent" /> {profile.phone}
+              <a href={`tel:${profile.phone.replace(/\s/g, "")}`} data-ball-floor className="group flex items-center gap-3 text-lg tabular-nums transition-colors duration-150 hover:text-accent">
+                <SocialIcon icon="phone" className="size-5 text-muted transition-colors duration-150 group-hover:text-accent" /> {profile.phone}
               </a>
             )}
           </Reveal>
 
-          <Reveal delay={0.3} className="grid grid-cols-2 gap-4 font-mono text-xs">
-            <div className="rounded-xl border border-line bg-surface p-4">
-              <span className="block text-[10px] text-muted uppercase">Local time</span>
-              <span className="mt-1 block text-foreground">Colombo, LK · UTC+5:30</span>
-              <span className="mt-0.5 block text-accent">
+          <Reveal delay={0.3} className="grid grid-cols-2 gap-4">
+            <div data-ball-floor className="rounded-xl border border-line bg-surface p-5">
+              <span className="block text-[13px] text-muted">Local time</span>
+              <span className="mt-2 block font-mono text-lg text-foreground tabular-nums">
                 <LiveClock timeZone={profile.timezone} />
               </span>
+              <span className="mt-1 block text-[13px] text-secondary">Colombo · UTC+05:30</span>
             </div>
-            <div className="rounded-xl border border-line bg-surface p-4">
-              <span className="block text-[10px] text-muted uppercase">Availability</span>
-              <span className="mt-1 block text-foreground">{profile.availability}</span>
-              <span className="mt-0.5 flex items-center gap-1.5 text-emerald-400">
-                <span className="size-1.5 animate-pulse rounded-full bg-emerald-400" /> Replies within 24h
+            <div data-ball-floor className="rounded-xl border border-line bg-surface p-5">
+              <span className="block text-[13px] text-muted">Availability</span>
+              <span className="mt-2 flex items-center gap-2 text-lg text-foreground">
+                <span className="size-1.5 shrink-0 rounded-full bg-accent" />
+                {profile.availability}
               </span>
             </div>
           </Reveal>

@@ -41,24 +41,24 @@ export function Terminal() {
   };
 
   return (
-    <div data-ball-floor className="max-w-4xl overflow-hidden rounded-2xl border border-line bg-background font-mono text-xs shadow-2xl">
+    <div data-ball-floor className="max-w-4xl overflow-hidden rounded-2xl border border-line bg-background font-mono text-xs shadow-[0_24px_48px_-16px_rgb(0_0_0/0.6)]">
       <div className="flex items-center justify-between border-b border-line bg-surface px-4 py-3">
         <div className="flex items-center gap-2">
-          <span className="size-3 rounded-full bg-[#ff5f56]" />
-          <span className="size-3 rounded-full bg-[#ffbd2e]" />
-          <span className="size-3 rounded-full bg-[#27c93f]" />
-          <span className="ml-3 text-[11px] text-muted">pravihara@portfolio ~ %</span>
+          <span className="size-2.5 rounded-full bg-white/15" />
+          <span className="size-2.5 rounded-full bg-white/15" />
+          <span className="size-2.5 rounded-full bg-white/15" />
+          <span className="ml-3 text-xs text-muted">pravihara@portfolio ~ %</span>
         </div>
-        <span className="text-[10px] text-emerald-400 uppercase">● online</span>
+        <span className="text-xs text-muted">zsh</span>
       </div>
 
-      <div className="flex flex-wrap gap-2 border-b border-line bg-white/[0.02] p-3 text-[11px]">
+      <div className="flex flex-wrap gap-2 border-b border-line bg-white/2 p-3 text-xs">
         <span className="mr-2 self-center text-muted">Try:</span>
         {quickCommands.map((c) => (
           <button
             key={c}
             onClick={() => run(c)}
-            className="rounded border border-line bg-white/5 px-3 py-2 text-foreground transition hover:border-accent/50 hover:text-accent"
+            className="h-8 rounded-md border border-line bg-white/4 px-3 text-foreground transition-colors duration-150 hover:border-white/24"
           >
             {c}
           </button>
@@ -67,20 +67,20 @@ export function Terminal() {
 
       <div ref={body} data-lenis-prevent className="h-72 space-y-1 overflow-y-auto p-6 leading-relaxed whitespace-pre-wrap">
         {lines.map((l, i) => (
-          <div key={i} className={l.kind === "cmd" ? "pt-2 text-accent" : l.kind === "err" ? "text-red-400" : "text-zinc-300"}>
+          <div key={i} className={l.kind === "cmd" ? "pt-2 text-accent" : l.kind === "err" ? "text-red-400" : "text-secondary"}>
             {l.kind === "cmd" ? `> ${l.text}` : l.text}
           </div>
         ))}
       </div>
 
       <form onSubmit={submit} className="flex items-center gap-3 border-t border-line bg-surface/50 px-6 py-4">
-        <span className="font-bold text-accent">&gt;</span>
+        <span className="font-medium text-accent">&gt;</span>
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder="type a command — try 'help'"
           aria-label="Terminal command"
-          className="w-full bg-transparent text-base text-foreground placeholder-zinc-600 outline-none sm:text-xs"
+          className="w-full bg-transparent text-base text-foreground placeholder:text-muted/70 outline-none sm:text-xs"
           autoComplete="off"
           spellCheck={false}
         />

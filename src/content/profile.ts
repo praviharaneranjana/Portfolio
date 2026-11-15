@@ -14,8 +14,8 @@ export const profile: Profile = {
   hero: {
     eyebrow: "Software Engineer // Sri Lanka",
     eyebrowAccent: "Open to .NET roles",
-    headlineMuted: "Pravihara Abegunasekara.",
-    headlineStrong: "I build full-stack web apps, and make slow ones fast.",
+    headlineMuted: "Pravihara Abegunasekara",
+    headlineStrong: "I build full-stack web apps, and make slow ones fast",
     position: ".NET & full-stack engineer. Mostly enterprise SaaS, plus AI projects and, lately, Unity games.",
     facts: [
       { label: "Based in", value: "Homagama, Sri Lanka · UTC+05:30" },

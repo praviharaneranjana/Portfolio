@@ -21,8 +21,9 @@ export function MagneticBadge({ text, links }: { text: string; links: BadgeLink[
   const wrap = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [layout, setLayout] = useState({ side: -1, reach: REACH.wide, shift: 0 });
-  const x = useSpring(useMotionValue(0), { stiffness: 220, damping: 16 });
-  const y = useSpring(useMotionValue(0), { stiffness: 220, damping: 16 });
+  // Critically damped: the badge leans toward the cursor and settles without wobbling.
+  const x = useSpring(useMotionValue(0), { stiffness: 200, damping: 28 });
+  const y = useSpring(useMotionValue(0), { stiffness: 200, damping: 28 });
 
   useEffect(() => {
     if (!open) return;
@@ -80,15 +81,16 @@ export function MagneticBadge({ text, links }: { text: string; links: BadgeLink[
           x.set(0);
           y.set(0);
         }}
-        whileHover={{ scale: 1.06 }}
-        animate={{ scale: open ? 0.92 : 1 }}
-        className="group relative flex size-32 shrink-0 cursor-pointer items-center justify-center rounded-full bg-accent shadow-[0_0_50px_rgba(255,77,48,0.35)]"
+        whileTap={{ scale: 0.97 }}
+        animate={{ scale: open ? 0.94 : 1 }}
+        transition={{ duration: 0.3, ease }}
+        className="group relative flex size-32 shrink-0 cursor-pointer items-center justify-center rounded-full bg-accent shadow-[inset_0_1px_0_rgb(255_255_255/0.25),0_16px_32px_-12px_rgb(0_0_0/0.6)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
       >
         <svg viewBox="0 0 100 100" className="animate-spin-slow absolute inset-0 size-full p-1.5" aria-hidden>
           <defs>
             <path id="badge-circle" d="M 50,50 m -37,0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" />
           </defs>
-          <text className="fill-white font-mono text-[8.2px] font-semibold tracking-[0.22em] uppercase">
+          <text className="fill-white font-mono text-[8.2px] font-medium tracking-[0.2em] uppercase">
             <textPath href="#badge-circle">{text.repeat(2)}</textPath>
           </text>
         </svg>
@@ -122,7 +124,7 @@ export function MagneticBadge({ text, links }: { text: string; links: BadgeLink[
                   {/* Arm: rotated toward its node, grows out from the badge edge. */}
                   <div className="absolute top-0 left-0 origin-left" style={{ transform: `rotate(${n.angle}deg)` }}>
                     <motion.span
-                      className="absolute top-0 h-px origin-left bg-gradient-to-r from-accent to-white/40"
+                      className="absolute top-0 h-px origin-left bg-white/25"
                       style={{ left: BADGE_R + 4, width: Math.max(n.len - BADGE_R - 10, 0) }}
                       initial={{ scaleX: 0 }}
                       animate={{ scaleX: 1 }}
@@ -141,7 +143,7 @@ export function MagneticBadge({ text, links }: { text: string; links: BadgeLink[
                     href={link.href}
                     download={link.download}
                     onClick={() => setOpen(false)}
-                    className={`pointer-events-auto absolute flex -translate-y-1/2 items-center gap-2 rounded-full border border-white/10 bg-surface-elevated px-3.5 shadow-[0_12px_30px_-8px_rgb(0_0_0/0.8)] py-1.5 font-mono text-[11px] tracking-wider whitespace-nowrap text-foreground uppercase transition-colors hover:border-accent hover:text-accent ${
+                    className={`pointer-events-auto absolute flex h-9 -translate-y-1/2 items-center gap-2.5 rounded-lg border border-white/10 bg-surface-elevated px-3 text-sm whitespace-nowrap text-foreground shadow-[0_12px_30px_-8px_rgb(0_0_0/0.8)] transition-colors duration-150 hover:border-white/24 hover:bg-[#202125] ${
                       layout.side < 0 ? "-translate-x-full" : ""
                     }`}
                     style={{ left: n.x + layout.side * 12, top: n.y }}
@@ -149,7 +151,7 @@ export function MagneticBadge({ text, links }: { text: string; links: BadgeLink[
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.45, delay: 0.25 + i * 0.04, ease }}
                   >
-                    <span className="text-muted">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="font-mono text-xs text-muted tabular-nums">{String(i + 1).padStart(2, "0")}</span>
                     {link.label}
                   </motion.a>
                 </div>

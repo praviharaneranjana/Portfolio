@@ -262,7 +262,7 @@ function VaultIntro() {
           <button
             type="button"
             onClick={skip}
-            className="label rounded-full border border-line px-4 py-2 text-muted transition-colors hover:border-white/40 hover:text-foreground"
+            className="btn btn-sm btn-secondary text-secondary"
           >
             Skip
           </button>

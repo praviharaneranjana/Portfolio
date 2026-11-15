@@ -6,6 +6,8 @@
   --foreground: #ededee;
   --surface: #141517;
   --surface-elevated: #1a1b1e;
+  /* Three text roles: foreground (headings, values), secondary (body copy), muted (meta and captions). */
+  --secondary: #a8a8ae;
   --muted: #8b8c92;
   --line: rgb(255 255 255 / 0.08);
   --accent: #ff4d30;
@@ -16,6 +18,7 @@
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
   --color-surface-elevated: var(--surface-elevated);
+  --color-secondary: var(--secondary);
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-accent: var(--accent);
@@ -60,19 +63,77 @@ body {
   html.has-cursor, html.has-cursor * { cursor: none !important; }
 }
 
+/* The site's signature: numbered mono section labels ("01 // Selected Work"). Section labels only —
+   every other label, button and caption is sentence case. */
 @utility label {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.2em;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
+/* Quiet raised panel: one surface step, a hairline and a soft top highlight. No hue, no glow. */
 @utility glass {
-  background: linear-gradient(135deg, rgb(255 255 255 / 0.05) 0%, rgb(16 16 19 / 0.78) 100%);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgb(255 255 255 / 0.09);
-  box-shadow: 0 30px 60px -12px rgb(0 0 0 / 0.7), inset 0 1px 0 rgb(255 255 255 / 0.1);
+  background: rgb(20 21 23 / 0.86);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--line);
+  box-shadow: 0 24px 48px -16px rgb(0 0 0 / 0.6), inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+
+/* Small quiet tag for technologies and statuses. */
+@utility tag {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding-inline: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--surface-elevated);
+  font-size: 13px;
+  line-height: 1;
+  color: var(--secondary);
+  white-space: nowrap;
+}
+
+/* Buttons: one height scale, one radius, one curve. Pair `btn` with `btn-primary` or `btn-secondary`
+   (add `btn-sm` in headers and dense panels). */
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding-inline: 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  transition-property: color, background-color, border-color, opacity, transform;
+  transition-duration: 160ms;
+  transition-timing-function: var(--ease-out-expo);
+  &:active { transform: scale(0.98); }
+  &:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+}
+@utility btn-sm {
+  height: 36px;
+  padding-inline: 14px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+@utility btn-primary {
+  background: var(--foreground);
+  color: var(--background);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5);
+  &:hover { background: #ffffff; }
+}
+@utility btn-secondary {
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: rgb(255 255 255 / 0.03);
+  color: var(--foreground);
+  &:hover { border-color: rgb(255 255 255 / 0.24); background: rgb(255 255 255 / 0.06); }
 }
 
 @utility bg-grid {
@@ -89,13 +150,13 @@ body {
   .animate-spin-slow { animation: none; }
 }
 
-/* Syntax colours for the hero code cards */
-.tok-kw { color: #c792ea; }
-.tok-type { color: #ffcb6b; }
-.tok-fn { color: #82aaff; }
-.tok-str { color: #c3e88d; }
-.tok-num { color: #f78c6c; }
-.tok-com { color: #5c6370; font-style: italic; }
+/* Syntax colours for the hero code cards: neutral steps plus the coral accent, so code never competes with it. */
+.tok-kw { color: #ff7a61; }
+.tok-type { color: #e8e2d8; }
+.tok-fn { color: #ededee; }
+.tok-str { color: #b4bac3; }
+.tok-num { color: #ff9a85; }
+.tok-com { color: #66686e; }
 
 /* Lenis smooth scroll */
 html.lenis, html.lenis body { height: auto; }

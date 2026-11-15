@@ -6,6 +6,7 @@ import { siteConfig } from "@/config/site";
 import { profile } from "@/content";
 import { intro, useGateOpen } from "@/lib/gate";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/ui/Logo";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -26,31 +27,24 @@ export function Navbar() {
       )}
     >
       <div className="mx-auto flex h-20 max-w-[1440px] items-center justify-between px-6 md:px-12">
-        <a href="#top" className="group -my-2 flex items-center gap-2 py-2">
-          <span className="size-2 rounded-full bg-accent shadow-[0_0_8px_#ff4d30] transition-transform group-hover:scale-125" />
-          <span className="text-lg font-semibold tracking-wide uppercase">
-            {profile.shortName}
-            <sup className="ml-0.5 font-mono text-[9px] text-muted">SE</sup>
-          </span>
+        <a href="#top" aria-label={`${profile.shortName}, back to top`} className="-my-2 py-2">
+          <Logo />
         </a>
 
-        <nav className="hidden items-center gap-10 md:flex">
+        <nav className="hidden items-center gap-8 md:flex">
           {links.map((s) => (
-            <a key={s.id} href={`#${s.id}`} className="label text-muted transition-colors hover:text-foreground">
+            <a key={s.id} href={`#${s.id}`} className="text-sm text-muted transition-colors duration-150 hover:text-foreground">
               {s.label}
             </a>
           ))}
         </nav>
 
         <div className="flex items-center gap-4">
-          <a
-            href="#contact"
-            className="label hidden items-center gap-2 rounded-full border border-line px-5 py-2.5 text-foreground transition-all duration-300 hover:bg-white hover:text-black sm:inline-flex"
-          >
-            Get in touch <span className="text-accent">↗</span>
+          <a href="#contact" className="btn btn-sm btn-secondary max-sm:hidden">
+            Get in touch
           </a>
           <button
-            className="label -mr-3 p-3 text-foreground md:hidden"
+            className="-mr-3 p-3 text-sm font-medium text-foreground md:hidden"
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}

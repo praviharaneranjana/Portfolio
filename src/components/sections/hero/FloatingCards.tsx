@@ -11,34 +11,26 @@ function CardBody({ card }: { card: CodeCard }) {
 
   if (card.kind === "metrics" && card.metrics)
     return (
-      <div className="space-y-2.5 font-mono text-[10.5px]">
+      <dl className="space-y-2 text-xs">
         {card.metrics.map((m) => (
-          <div key={m.label} className="flex justify-between text-muted">
-            <span className="uppercase">{m.label}</span>
-            <span className="text-foreground">{m.value}</span>
+          <div key={m.label} className="flex items-baseline justify-between gap-4">
+            <dt className="text-muted">{m.label}</dt>
+            <dd className="font-mono text-foreground tabular-nums">{m.value}</dd>
           </div>
         ))}
-        <div className="mt-1 h-1 overflow-hidden rounded-full bg-white/10">
-          <motion.div
-            className="h-full bg-gradient-to-r from-white/60 to-accent"
-            initial={{ width: "0%" }}
-            animate={{ width: "95%" }}
-            transition={{ duration: 2.2, delay: 1.6, ease: [0.16, 1, 0.3, 1] }}
-          />
-        </div>
-      </div>
+      </dl>
     );
 
   if (card.kind === "pipeline" && card.steps)
     return (
-      <div className="grid grid-cols-3 gap-1.5 text-center font-mono text-[9.5px] uppercase">
+      <div className="grid grid-cols-3 gap-2 text-center font-mono text-[11px]">
         {card.steps.map((s, i) => (
           <div
             key={s}
             className={
               i === card.steps!.length - 1
-                ? "rounded border border-accent/40 bg-accent/15 p-1.5 font-semibold text-accent"
-                : "rounded border border-line bg-white/5 p-1.5 text-zinc-300"
+                ? "rounded-md border border-accent/30 bg-accent/10 px-2 py-1.5 text-accent"
+                : "rounded-md border border-line bg-white/3 px-2 py-1.5 text-secondary"
             }
           >
             {s}
@@ -63,7 +55,6 @@ function FloatingCard({
   my: MotionValue<number>;
   trigger: boolean;
 }) {
-  const reduce = useReducedMotion();
   const x = useTransform(mx, (v) => v * card.depth);
   const y = useTransform(my, (v) => v * card.depth * 0.7);
   const rotate = useTransform(mx, (v) => v * (card.depth / 12));
@@ -76,30 +67,24 @@ function FloatingCard({
       animate={trigger ? { opacity: 1, scale: 1, filter: "blur(0px)" } : { opacity: 0, scale: 0.94, filter: "blur(8px)" }}
       transition={{ duration: 1.2, delay: intro.text + 0.3 + index * 0.15, ease: [0.16, 1, 0.3, 1] }}
     >
-      {/* Idle drift, independent of the mouse */}
-      <motion.div
-        className="glass rounded-xl p-4"
-        animate={reduce ? undefined : { y: [0, -10, 0] }}
-        transition={{ duration: 6 + index, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <div className="mb-3 flex items-center justify-between border-b border-line pb-2.5">
-          <div className="flex items-center gap-1.5">
+      <div className="glass rounded-xl p-4">
+        <div className="mb-3 flex items-center justify-between gap-3 border-b border-line pb-3">
+          <div className="flex min-w-0 items-center gap-1.5">
             {card.kind === "code" && (
               <>
-                <span className="size-2.5 rounded-full bg-[#ff5f56]/80" />
-                <span className="size-2.5 rounded-full bg-[#ffbd2e]/80" />
-                <span className="size-2.5 rounded-full bg-[#27c93f]/80" />
+                <span className="size-2 rounded-full bg-white/15" />
+                <span className="size-2 rounded-full bg-white/15" />
+                <span className="size-2 rounded-full bg-white/15" />
               </>
             )}
-            {card.kind !== "code" && <span className="size-1.5 animate-pulse rounded-full bg-emerald-400" />}
-            <span className="ml-1.5 font-mono text-[10px] text-muted uppercase">{card.title}</span>
+            <span className={`truncate font-mono text-[11px] text-secondary ${card.kind === "code" ? "ml-2" : ""}`}>
+              {card.title}
+            </span>
           </div>
-          {card.badge && (
-            <span className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-[9px] text-accent">{card.badge}</span>
-          )}
+          {card.badge && <span className="shrink-0 font-mono text-[11px] text-muted">{card.badge}</span>}
         </div>
         <CardBody card={card} />
-      </motion.div>
+      </div>
     </motion.div>
   );
 }

@@ -81,7 +81,7 @@ export function ScreenTour({ shots, url, label }: { shots: Screenshot[]; url?: s
                     : "border-line text-muted hover:text-foreground lg:border-transparent",
                 )}
               >
-                <span className={cn("font-mono text-[10px] transition-colors", selected ? "text-accent" : "text-muted/60")}>{pad(i + 1)}</span>
+                <span className={cn("font-mono text-xs tabular-nums transition-colors", selected ? "text-accent" : "text-muted/60")}>{pad(i + 1)}</span>
                 {shot.label}
               </button>
             );
@@ -110,11 +110,11 @@ export function ScreenTour({ shots, url, label }: { shots: Screenshot[]; url?: s
         </div>
 
         <div className="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
-          <p data-ball-floor aria-hidden className="max-w-2xl text-sm leading-relaxed text-zinc-400">
+          <p data-ball-floor aria-hidden className="max-w-2xl text-sm leading-relaxed text-secondary">
             {current.alt}
           </p>
           <div className="flex shrink-0 items-center gap-2">
-            <span className="mr-auto font-mono text-[10px] text-muted sm:mr-2">
+            <span className="mr-auto font-mono text-xs text-muted tabular-nums sm:mr-2">
               <span className="text-foreground">{pad(active + 1)}</span> / {pad(shots.length)}
             </span>
             <button

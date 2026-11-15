@@ -11,9 +11,9 @@ export function Education() {
             <div className="md:col-span-6">
               <h3 data-ball-floor className="text-2xl font-medium tracking-tight md:text-3xl">{e.degree}</h3>
               <p data-ball-floor className="mt-1 text-muted">{e.institution}</p>
-              <p data-ball-floor className="mt-5 text-sm leading-relaxed text-zinc-400">{e.modules.join(" · ")}</p>
+              <p data-ball-floor className="mt-5 text-sm leading-relaxed text-secondary">{e.modules.join(" · ")}</p>
             </div>
-            <p data-ball-floor className="font-mono text-xs tracking-wider text-muted uppercase md:col-span-3 md:text-right">{e.period}</p>
+            <p data-ball-floor className="text-sm text-muted tabular-nums md:col-span-3 md:text-right">{e.period}</p>
           </div>
         </Reveal>
       ))}

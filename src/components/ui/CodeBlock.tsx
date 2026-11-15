@@ -34,7 +34,7 @@ export function CodeBlock({ code, language = "csharp" }: { code: string; languag
   parts.push({ text: code.slice(last) });
 
   return (
-    <pre className="font-mono text-[10.5px] leading-[1.7] whitespace-pre text-zinc-300">
+    <pre className="font-mono text-[11px] leading-[1.7] whitespace-pre text-secondary">
       {parts.map((p, i) => (p.cls ? <span key={i} className={p.cls}>{p.text}</span> : p.text))}
     </pre>
   );

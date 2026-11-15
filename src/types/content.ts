@@ -131,3 +131,10 @@ export type CodeCard = {
   /** Parallax strength; negative moves against the mouse. */
   depth: number;
 };
+
+/** The tilting 3D panel under the hero headline. Every figure must come from the CV. */
+export type HeroPanel = {
+  results: { value: string; label: string; detail: string; highlight?: boolean }[];
+  stack: { name: string; area: string; detail: string }[];
+  availability: string;
+};

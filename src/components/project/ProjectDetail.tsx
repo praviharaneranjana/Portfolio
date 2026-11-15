@@ -28,7 +28,7 @@ function Section({
     <section className={cn("border-t border-line py-20 md:py-28", split && "grid gap-10 lg:grid-cols-12")}>
       <Reveal className={cn(split ? "lg:col-span-4" : "mb-12 md:mb-16")}>
         <p data-ball-floor className="label text-accent">{`${pad(index)} // ${label}`}</p>
-        <h2 data-ball-floor className="mt-4 text-3xl font-medium tracking-tight md:text-5xl">{title}</h2>
+        <h2 data-ball-floor className="mt-4 text-3xl font-medium tracking-[-0.02em] md:text-5xl">{title}</h2>
       </Reveal>
       <div className={cn(split && "lg:col-span-8")}>{children}</div>
     </section>
@@ -71,13 +71,13 @@ export function ProjectDetail({ project, number, next }: { project: CaseStudy; n
 
       <div className="mt-14 grid gap-10 border-t border-line pt-10 lg:grid-cols-12">
         <Reveal delay={0.35} className="lg:col-span-7">
-          {project.summary && <p data-ball-floor className="text-lg leading-relaxed font-light text-zinc-300 md:text-xl">{project.summary}</p>}
+          {project.summary && <p data-ball-floor className="text-lg leading-relaxed text-secondary md:text-xl">{project.summary}</p>}
         </Reveal>
         <Reveal delay={0.45} className="lg:col-span-4 lg:col-start-9">
           <dl className="grid grid-cols-2 gap-x-6 gap-y-6">
             {facts.map((f) => (
               <div key={f.label} data-ball-floor>
-                <dt className="font-mono text-[10px] tracking-wider text-muted uppercase">{f.label}</dt>
+                <dt className="text-[13px] text-muted">{f.label}</dt>
                 <dd className="mt-1 text-foreground">{f.value}</dd>
               </div>
             ))}
@@ -87,9 +87,9 @@ export function ProjectDetail({ project, number, next }: { project: CaseStudy; n
               href={link.href}
               target="_blank"
               rel="noreferrer"
-              className="label mt-8 inline-flex items-center gap-2 rounded-full border border-line px-5 py-2.5 text-foreground transition-all duration-300 hover:bg-white hover:text-black"
+              className="btn btn-secondary mt-8"
             >
-              Visit {link.label} <ArrowUpRight className="size-3.5 text-accent" />
+              Visit {link.label} <ArrowUpRight className="size-4 text-muted" strokeWidth={1.5} />
             </a>
           )}
         </Reveal>
@@ -115,7 +115,7 @@ export function ProjectDetail({ project, number, next }: { project: CaseStudy; n
               <Reveal key={h} delay={i * 0.05}>
                 <li data-ball-floor className="grid grid-cols-[2.5rem_1fr] gap-4 border-b border-line py-6 md:grid-cols-[3.5rem_1fr]">
                   <span className="pt-1 font-mono text-xs text-accent">{pad(i + 1)}</span>
-                  <p className="leading-relaxed text-zinc-300 md:text-lg">{h}</p>
+                  <p className="leading-relaxed text-secondary md:text-lg">{h}</p>
                 </li>
               </Reveal>
             ))}
@@ -128,8 +128,8 @@ export function ProjectDetail({ project, number, next }: { project: CaseStudy; n
               <div data-ball-floor className="mb-10 grid grid-cols-3 gap-4 border-b border-line pb-8 font-mono">
                 {project.metrics.map((m) => (
                   <div key={m.label}>
-                    <span className="block text-[10px] text-muted uppercase">{m.label}</span>
-                    <span className="text-2xl text-foreground md:text-3xl">{m.value}</span>
+                    <span className="block font-sans text-[13px] text-muted">{m.label}</span>
+                    <span className="mt-1 block text-2xl text-foreground tabular-nums md:text-3xl">{m.value}</span>
                   </div>
                 ))}
               </div>
@@ -137,7 +137,7 @@ export function ProjectDetail({ project, number, next }: { project: CaseStudy; n
             <ul data-ball-floor className="flex flex-wrap gap-2">
               {project.stack.map((t) => (
                 <li key={t}>
-                  <Badge className="px-4 py-2 text-[11px]">{t}</Badge>
+                  <Badge>{t}</Badge>
                 </li>
               ))}
             </ul>
@@ -162,7 +162,7 @@ export function ProjectDetail({ project, number, next }: { project: CaseStudy; n
           {mobile.length > 4 && (
             <div className="mt-20 md:mt-28">
               <Reveal>
-                <p data-ball-floor className="label mb-8 text-muted">On a phone · {mobile.length} screens</p>
+                <p data-ball-floor className="mb-8 text-sm text-muted">On a phone · {mobile.length} screens</p>
               </Reveal>
               <Reveal>
                 <PhoneScroller shots={mobile} label={`${project.title} on a phone`} />
@@ -173,13 +173,13 @@ export function ProjectDetail({ project, number, next }: { project: CaseStudy; n
           {mobile.length > 1 && mobile.length <= 4 && (
             <div className="mt-20 md:mt-28">
               <Reveal>
-                <p data-ball-floor className="label mb-8 text-muted">On a phone · {mobile.length} screens</p>
+                <p data-ball-floor className="mb-8 text-sm text-muted">On a phone · {mobile.length} screens</p>
               </Reveal>
               <div className="-mx-6 flex snap-x snap-mandatory scroll-px-6 gap-5 overflow-x-auto px-6 pb-2 md:mx-0 md:grid md:grid-cols-4 md:gap-8 md:overflow-visible md:px-0 lg:px-[8%]">
                 {mobile.map((shot, i) => (
                   <Reveal key={shot.src} delay={i * 0.08} className="w-[58%] shrink-0 snap-start md:w-auto">
                     <PhoneFrame shot={shot} sizes="(min-width: 768px) 20vw, 58vw" />
-                    <p className="mt-4 text-center font-mono text-[10px] text-muted uppercase">{shot.label}</p>
+                    <p className="mt-4 text-center text-[13px] text-muted">{shot.label}</p>
                   </Reveal>
                 ))}
               </div>
@@ -191,7 +191,7 @@ export function ProjectDetail({ project, number, next }: { project: CaseStudy; n
           <Section key={g.title} index={++section} label={g.label} title={g.title}>
             {g.description && (
               <Reveal>
-                <p data-ball-floor className="-mt-4 mb-12 max-w-2xl leading-relaxed text-zinc-400 md:-mt-8 md:mb-16 md:text-lg">
+                <p data-ball-floor className="-mt-4 mb-12 max-w-2xl leading-relaxed text-secondary md:-mt-8 md:mb-16 md:text-lg">
                   {g.description}
                 </p>
               </Reveal>
@@ -211,9 +211,9 @@ export function ProjectDetail({ project, number, next }: { project: CaseStudy; n
             <div className="grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-2">
               {project.details.map((d, i) => (
                 <Reveal key={d.title} delay={(i % 2) * 0.08} className="bg-background p-6 md:p-8">
-                  <p className="font-mono text-[10px] text-accent">{pad(i + 1)}</p>
+                  <p className="font-mono text-xs text-accent tabular-nums">{pad(i + 1)}</p>
                   <h3 data-ball-floor className="mt-3 text-lg font-medium tracking-tight">{d.title}</h3>
-                  <p data-ball-floor className="mt-2 text-sm leading-relaxed text-zinc-400">{d.body}</p>
+                  <p data-ball-floor className="mt-2 text-sm leading-relaxed text-secondary">{d.body}</p>
                 </Reveal>
               ))}
             </div>
@@ -231,12 +231,12 @@ export function ProjectDetail({ project, number, next }: { project: CaseStudy; n
             className="group flex flex-col gap-6 border-y border-line py-12 transition-colors duration-500 hover:border-white/25 md:flex-row md:items-center md:justify-between md:py-16"
           >
             <div>
-              <p className="label text-accent">See it live</p>
+              <p className="text-sm text-muted">See it live</p>
               <p className="mt-4 text-4xl font-medium tracking-tight transition-colors group-hover:text-accent md:text-6xl">{link.label}</p>
               <p className="mt-3 text-muted md:text-lg">Opens {url ?? link.label} in a new tab.</p>
             </div>
-            <span className="label inline-flex shrink-0 items-center gap-3 self-start rounded-full border border-line px-6 py-3.5 text-foreground transition-all duration-300 group-hover:bg-white group-hover:text-black md:self-auto">
-              Visit website <ArrowUpRight className="size-4 text-accent" />
+            <span className="btn btn-secondary shrink-0 self-start group-hover:border-white/24 group-hover:bg-white/6 md:self-auto">
+              Visit website <ArrowUpRight className="size-4 text-muted" strokeWidth={1.5} />
             </span>
           </a>
         </Reveal>
@@ -249,12 +249,12 @@ export function ProjectDetail({ project, number, next }: { project: CaseStudy; n
             className="group relative grid items-center gap-10 overflow-hidden rounded-2xl border border-line bg-surface p-8 transition-colors duration-500 hover:border-white/25 hover:bg-surface-elevated md:p-12 lg:grid-cols-12"
           >
             <div className="lg:col-span-6">
-              <p data-ball-floor className="label text-muted">Next project</p>
+              <p data-ball-floor className="text-sm text-muted">Next project</p>
               <p data-ball-floor className="mt-4 text-4xl font-medium tracking-tight transition-colors group-hover:text-accent md:text-6xl">{next.title}</p>
               <p className="mt-3 text-muted md:text-lg">{next.subtitle}</p>
-              <span className="label mt-8 inline-flex items-center gap-3 text-foreground">
+              <span className="mt-8 inline-flex items-center gap-3 text-sm font-medium text-foreground">
                 View project
-                <span className="flex size-8 items-center justify-center rounded-full border border-line text-accent transition-all duration-500 group-hover:translate-x-1 group-hover:border-accent/50 group-hover:bg-accent/10">
+                <span className="flex size-8 items-center justify-center rounded-lg border border-line text-foreground transition-[transform,border-color] duration-300 group-hover:translate-x-1 group-hover:border-white/24">
                   →
                 </span>
               </span>

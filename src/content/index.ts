@@ -5,4 +5,4 @@ export { projects } from "./projects";
 export { capabilities } from "./capabilities";
 export { skills } from "./skills";
 export { education } from "./education";
-export { heroCards } from "./hero";
+export { heroCards, heroPanel } from "./hero";
