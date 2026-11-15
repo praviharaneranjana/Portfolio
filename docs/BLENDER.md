@@ -44,8 +44,8 @@ Everything mounted on a door must stay behind `FACADE_BACK` (y > −0.82) so it 
 2. **Bevels on every hard edge** (`segments=3`, `harden_normals`). Edges catching light is what reads as "machined".
 3. **Consistent texel density.** `Part._box_uv()` box-projects UVs in world space, so every part shares one scale per material (`tile=`).
 4. **Depth.** Recessed doorway, pocket doors, interior chamber. Nothing floats in front of a flat wall.
-5. **Restrained colour.** Near-black steel and concrete; coral only on the status light, seam and one painted index mark. No emissive "UI" accents on the model.
-6. **Lighting in the browser.** Metal is only as good as what it reflects. The web scene uses drei `<Environment>` softboxes, a shadowed spot key, N8AO, a faint coral rim, and film grain + vignette. Without an environment map PBR metal looks black and flat.
+5. **Restrained colour.** Near-black steel and concrete; ice blue only on the status light, seam and one painted index mark. No emissive "UI" accents on the model.
+6. **Lighting in the browser.** Metal is only as good as what it reflects. The web scene uses drei `<Environment>` softboxes, a shadowed spot key, N8AO, a faint ice-blue rim, and film grain + vignette. Without an environment map PBR metal looks black and flat.
 
 ## Material recipe the glTF exporter understands
 

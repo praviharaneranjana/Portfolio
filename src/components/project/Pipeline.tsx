@@ -1,4 +1,4 @@
-/** Short labels drawn as a node diagram; the last node is highlighted coral. */
+/** Short labels drawn as a node diagram; the last node is highlighted in the accent colour. */
 export function Pipeline({ steps }: { steps: string[] }) {
   return (
     <div className="flex flex-wrap items-center justify-center gap-y-3">

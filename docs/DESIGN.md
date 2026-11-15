@@ -3,11 +3,11 @@
 ## Direction: "premium studio" editorial
 
 The site presents Pravihara as a brand — a studio-grade, editorial site rather than a template portfolio.
-Reference: [`design/reference-hero.jpg`](design/reference-hero.jpg) (dark sculptural render, two-tone headline, coral rotating badge).
+Reference: [`design/reference-hero.jpg`](design/reference-hero.jpg) (dark sculptural render, two-tone headline, rotating accent badge).
 
 ### Principles
 
-- **Restraint.** One accent colour (coral), used rarely: the badge, section labels, one key figure, focus. Everything else obsidian / titanium / off-white. No glows, no hue gradients, no pulsing dots.
+- **Restraint.** One accent colour (ice blue), used rarely: the badge, section labels, one key figure, focus. Everything else obsidian / titanium / off-white. No glows, no hue gradients, no pulsing dots.
 - **Editorial grid.** Thin 1px divider lines, numbered section labels (`01 // Selected Work`), generous whitespace.
 - **One signature.** The mono uppercase `label` is for numbered section labels (and the hero eyebrow) only. Every other label, button, tag and caption is sentence case, 12px or larger.
 - **Real 3D, not cartoon.** Physically lit, reflective materials with surface variation (roughness/normal maps), bevelled edges, environment reflections, film grain and vignette. No toy vehicles, joysticks, HUDs or game mechanics. Interaction is tactile and physical: turning a wheel, balls with weight.
@@ -24,7 +24,7 @@ Reference: [`design/reference-hero.jpg`](design/reference-hero.jpg) (dark sculpt
 | `--secondary` | `#a8a8ae` | body copy (`text-secondary`) |
 | `--muted` | `#8b8c92` | meta, captions, first headline line |
 | `--line` | `rgb(255 255 255 / 0.08)` | dividers, borders |
-| `--accent` | `#ff4d30` | coral: section labels, badge, one key figure, focus |
+| `--accent` | `#8ab4ff` | ice blue: section labels, badge, one key figure, focus |
 
 Three text roles only: `text-foreground`, `text-secondary`, `text-muted`. Don't use `zinc-*` greys or `font-light`.
 
@@ -46,23 +46,23 @@ Geist Sans for the interface (headlines medium weight, `tracking-[-0.03em]` from
 
 ## Intro: the vault
 
-A heavy steel vault door in a concrete wall (Blender-built, see [BLENDER.md](BLENDER.md)). The visitor turns the handwheel clockwise one full turn while a thin coral arc traces progress around it. On release, pins retract, cross-bolts slide, the doors unseal and roll into their pockets, the camera pushes into the lit chamber, and the page fades straight into the hero. UI is minimal: brand label, mute, Skip, degree readout, one line of instruction.
+A heavy steel vault door in a concrete wall (Blender-built, see [BLENDER.md](BLENDER.md)). The visitor turns the handwheel clockwise one full turn while a thin ice-blue arc traces progress around it. On release, pins retract, cross-bolts slide, the doors unseal and roll into their pockets, the camera pushes into the lit chamber, and the page fades straight into the hero. UI is minimal: brand label, mute, Skip, degree readout, one line of instruction.
 
 ## Hero anatomy
 
 1. **Sculpture** — three beaded pillars (`src/components/canvas/BeadArches.tsx`), top ~64vh, fading into the page. They rise in one at a time after the gate, then the copy reveals.
 2. **Floating editor cards** — `heroCards` in `src/content/hero.ts`; mouse parallax by `depth`, fade on scroll. Desktop (≥1024px) only.
-3. **Eyebrow** — `SOFTWARE ENGINEER // SRI LANKA —— ● Open to .NET roles` (static coral dot).
+3. **Eyebrow** — `SOFTWARE ENGINEER // SRI LANKA —— ● Open to .NET roles` (static ice-blue dot).
 4. **Two-tone headline** — name in grey, statement in white, masked line reveal on load.
 5. **3D panel** — `heroPanel` in `src/content/hero.ts`, rendered by `HeroDashboard.tsx`. A slab with a back plate (−18px) and raised content (+20px): it rises from a tipped-back angle after the gate, leans toward the mouse (max 5°/7°) with a neutral highlight following the cursor, and stays flat on touch and for reduced motion. Tabs: Results · Stack · Availability. Figures must match the CV.
-6. **Bottom row** — portrait (Fig. 01) · position statement · facts · intro · View work (primary) + Download CV (secondary) · magnetic coral badge.
+6. **Bottom row** — portrait (Fig. 01) · position statement · facts · intro · View work (primary) + Download CV (secondary) · magnetic ice-blue badge (dark text).
 
 ## Interactions
 
 | Element | Behaviour |
 | --- | --- |
-| Custom cursor | Dot + trailing ring; ring grows coral over links/buttons. Fine pointers only, off for reduced motion. |
-| Vault wheel | Drag (or hold →) to turn; inertia, ratchet ticks, coral progress arc. |
+| Custom cursor | Dot + trailing ring; ring turns ice blue over links/buttons. Fine pointers only, off for reduced motion. |
+| Vault wheel | Drag (or hold →) to turn; inertia, ratchet ticks, ice-blue progress arc. |
 | Sculpture | Pillars rise one by one after the gate, breathe, bead ripple, tilt to mouse, key light follows mouse, sink/rotate on scroll. |
 | Rolling balls | Three beaded balls (pillar material) perch on the pillars, then roll and squash down headings and cards (`data-ball-floor`) as you scroll, staying on screen. |
 | Code cards | Spring parallax, blur-in entrance. No idle loop. |
