@@ -12,7 +12,7 @@ export function Education() {
               <h3 data-ball-floor className="text-2xl font-medium tracking-tight md:text-3xl">{e.degree}</h3>
               <p data-ball-floor className="mt-1 text-muted">{e.institution}</p>
               {e.results && e.results.length > 0 && (
-                <dl className="mt-6 grid grid-cols-1 gap-4 border-y border-line py-5 sm:grid-cols-3">
+                <dl className="mt-6 grid grid-cols-1 gap-4 border-y border-line py-5 sm:grid-cols-2">
                   {e.results.map((r) => (
                     <div key={r.label} data-ball-floor>
                       <dt className="text-xs text-muted">{r.label}</dt>
