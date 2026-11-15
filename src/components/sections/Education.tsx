@@ -11,6 +11,16 @@ export function Education() {
             <div className="md:col-span-6">
               <h3 data-ball-floor className="text-2xl font-medium tracking-tight md:text-3xl">{e.degree}</h3>
               <p data-ball-floor className="mt-1 text-muted">{e.institution}</p>
+              {e.results && e.results.length > 0 && (
+                <dl className="mt-6 grid grid-cols-1 gap-4 border-y border-line py-5 sm:grid-cols-3">
+                  {e.results.map((r) => (
+                    <div key={r.label} data-ball-floor>
+                      <dt className="text-xs text-muted">{r.label}</dt>
+                      <dd className="mt-1 font-medium tabular-nums">{r.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
               <p data-ball-floor className="mt-5 text-sm leading-relaxed text-secondary">{e.modules.join(" · ")}</p>
             </div>
             <p data-ball-floor className="text-sm text-muted tabular-nums md:col-span-3 md:text-right">{e.period}</p>

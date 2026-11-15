@@ -113,6 +113,8 @@ export type Education = {
   degree: string;
   institution: string;
   period: string;
+  /** Final results, e.g. status, GPA, class of award. */
+  results?: { label: string; value: string }[];
   modules: string[];
 };
 

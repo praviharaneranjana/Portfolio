@@ -15,7 +15,11 @@ export const commands: Record<string, () => string[]> = {
     ]),
   projects: () => projects.map((p) => `${p.title.padEnd(20)} ${p.subtitle}`),
   capabilities: () => capabilities.map((c) => `${c.code}  ${c.title}`),
-  education: () => education.map((e) => `${e.degree} — ${e.institution} (${e.period})`),
+  education: () =>
+    education.flatMap((e) => [
+      `${e.degree} — ${e.institution} (${e.period})`,
+      ...(e.results ?? []).map((r) => `  ${r.label.padEnd(12)} ${r.value}`),
+    ]),
   contact: () => [
     `email     ${profile.email}`,
     ...(profile.phone ? [`phone     ${profile.phone}`] : []),

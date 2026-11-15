@@ -21,7 +21,7 @@ export const profile: Profile = {
       { label: "Based in", value: "Homagama, Sri Lanka · UTC+05:30" },
       { label: "Currently", value: "Full-Stack Software Engineer at Factum Software Solutions" },
       { label: "Building", value: "Operate — multi-tenant operations & compliance SaaS for clients in Saudi Arabia" },
-      { label: "Studying", value: "BSc (Hons) Software Engineering, NSBM Green University — final year" },
+      { label: "Degree", value: "BSc (Honours) Software Engineering, NSBM Green University — completed" },
       { label: "Stack", value: "C# · .NET · Laravel · React · Next.js · SQL · Python · Unity" },
     ],
     intro: [

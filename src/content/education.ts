@@ -2,9 +2,14 @@ import type { Education } from "@/types/content";
 
 export const education: Education[] = [
   {
-    degree: "BSc (Hons) in Software Engineering",
+    degree: "BSc (Honours) in Software Engineering",
     institution: "NSBM Green University, Sri Lanka",
-    period: "2022 – Present (Final Year)",
+    period: "2022 intake",
+    results: [
+      { label: "Status", value: "Completed" },
+      { label: "Final GPA", value: "3.03" },
+      { label: "Final award", value: "Second Class (Lower Division)" },
+    ],
     modules: [
       "Software Engineering",
       "Database Management Systems",
