@@ -27,6 +27,18 @@
 html {
   color-scheme: dark;
   background: var(--background);
+  /* No grey flash on tap: every control has its own hover/active state. */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Fire taps immediately (no double-tap-zoom wait) and stop long-press selecting control labels. */
+a, button, summary, [role="button"] {
+  touch-action: manipulation;
+}
+button, summary, [role="button"] {
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 body {

@@ -24,14 +24,14 @@ export function Hero() {
   return (
     <section id="top" className="relative overflow-hidden border-b border-line">
       {/* 3D sculpture */}
-      <div data-ball-pillars className="absolute inset-x-0 top-0 h-[58vh] md:h-[64vh]">
+      <div data-ball-pillars className="absolute inset-x-0 top-0 h-[58svh] md:h-[64vh]">
         <HeroScene />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent" />
       </div>
 
       <FloatingCards cards={heroCards} />
 
-      <div className="h-[52vh] md:h-[60vh]" />
+      <div className="h-[52svh] md:h-[60vh]" />
 
       <div className="relative z-20 mx-auto w-full max-w-[1440px] px-6 pb-20 md:px-12">
         <Reveal trigger={gateOpen} delay={intro.text} className="mb-6 flex flex-wrap items-center gap-x-3 gap-y-2">
@@ -85,11 +85,11 @@ export function Hero() {
               </p>
             ))}
             <div data-ball-floor className="flex flex-wrap gap-5 pt-3 font-mono text-[11px] tracking-widest uppercase">
-              <a href="#work" className="border-b border-white/30 pb-1 text-foreground transition-colors hover:border-accent hover:text-accent">
+              <a href="#work" className="relative border-b border-white/30 pb-1 text-foreground after:absolute after:-inset-3 transition-colors hover:border-accent hover:text-accent">
                 View work ↓
               </a>
               {profile.resumeUrl && (
-                <a href={profile.resumeUrl} download className="border-b border-white/15 pb-1 text-muted transition-colors hover:border-accent hover:text-accent">
+                <a href={profile.resumeUrl} download className="relative border-b border-white/15 pb-1 text-muted after:absolute after:-inset-3 transition-colors hover:border-accent hover:text-accent">
                   Download CV ↗
                 </a>
               )}
@@ -103,7 +103,7 @@ export function Hero() {
                     rel="noreferrer"
                     aria-label={s.label}
                     title={s.label}
-                    className="flex size-10 items-center justify-center rounded-full border border-line bg-white/[0.03] text-muted transition-colors hover:border-accent hover:text-accent"
+                    className="flex size-11 items-center justify-center rounded-full border border-line bg-white/[0.03] text-muted transition-colors hover:border-accent hover:text-accent"
                   >
                     <SocialIcon icon={s.icon} className="size-4" />
                   </a>

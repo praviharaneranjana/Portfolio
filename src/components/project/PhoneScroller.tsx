@@ -133,7 +133,7 @@ export function PhoneScroller({ shots, label, aspect }: { shots: Screenshot[]; l
             onClick={() => go(-1)}
             disabled={edges.start}
             aria-label="Previous screens"
-            className="grid size-9 place-items-center rounded-full border border-line text-muted transition-colors hover:border-white/25 hover:text-foreground disabled:pointer-events-none disabled:opacity-30"
+            className="grid size-11 place-items-center sm:size-9 rounded-full border border-line text-muted transition-colors hover:border-white/25 hover:text-foreground disabled:pointer-events-none disabled:opacity-30"
           >
             <ChevronLeft className="size-4" />
           </button>
@@ -142,7 +142,7 @@ export function PhoneScroller({ shots, label, aspect }: { shots: Screenshot[]; l
             onClick={() => go(1)}
             disabled={edges.end}
             aria-label="Next screens"
-            className="grid size-9 place-items-center rounded-full border border-line text-muted transition-colors hover:border-white/25 hover:text-foreground disabled:pointer-events-none disabled:opacity-30"
+            className="grid size-11 place-items-center sm:size-9 rounded-full border border-line text-muted transition-colors hover:border-white/25 hover:text-foreground disabled:pointer-events-none disabled:opacity-30"
           >
             <ChevronRight className="size-4" />
           </button>

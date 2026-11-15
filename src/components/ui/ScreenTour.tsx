@@ -121,7 +121,7 @@ export function ScreenTour({ shots, url, label }: { shots: Screenshot[]; url?: s
               type="button"
               onClick={() => go(active - 1)}
               aria-label="Previous screen"
-              className="grid size-9 place-items-center rounded-full border border-line text-muted transition-colors hover:border-white/25 hover:text-foreground"
+              className="grid size-11 place-items-center sm:size-9 rounded-full border border-line text-muted transition-colors hover:border-white/25 hover:text-foreground"
             >
               <ChevronLeft className="size-4" />
             </button>
@@ -129,7 +129,7 @@ export function ScreenTour({ shots, url, label }: { shots: Screenshot[]; url?: s
               type="button"
               onClick={() => go(active + 1)}
               aria-label="Next screen"
-              className="grid size-9 place-items-center rounded-full border border-line text-muted transition-colors hover:border-white/25 hover:text-foreground"
+              className="grid size-11 place-items-center sm:size-9 rounded-full border border-line text-muted transition-colors hover:border-white/25 hover:text-foreground"
             >
               <ChevronRight className="size-4" />
             </button>

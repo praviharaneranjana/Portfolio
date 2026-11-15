@@ -53,12 +53,12 @@ export function Terminal() {
       </div>
 
       <div className="flex flex-wrap gap-2 border-b border-line bg-white/[0.02] p-3 text-[11px]">
-        <span className="mr-2 self-center text-muted">QUICK EXEC:</span>
+        <span className="mr-2 self-center text-muted">Try:</span>
         {quickCommands.map((c) => (
           <button
             key={c}
             onClick={() => run(c)}
-            className="rounded border border-line bg-white/5 px-2.5 py-1 text-foreground transition hover:border-accent/50 hover:text-accent"
+            className="rounded border border-line bg-white/5 px-3 py-2 text-foreground transition hover:border-accent/50 hover:text-accent"
           >
             {c}
           </button>
@@ -80,7 +80,7 @@ export function Terminal() {
           onChange={(e) => setValue(e.target.value)}
           placeholder="type a command — try 'help'"
           aria-label="Terminal command"
-          className="w-full bg-transparent text-foreground placeholder-zinc-600 outline-none"
+          className="w-full bg-transparent text-base text-foreground placeholder-zinc-600 outline-none sm:text-xs"
           autoComplete="off"
           spellCheck={false}
         />

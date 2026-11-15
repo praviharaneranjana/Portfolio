@@ -5,12 +5,12 @@ import { Badge } from "@/components/ui/Badge";
 
 export function Experience() {
   return (
-    <section id="experience" className="mx-auto max-w-[1440px] scroll-mt-20 border-b border-line px-6 py-28 md:px-12">
-      <SectionHeader index="02" label="Experience" title="Where I ship." />
+    <section id="experience" className="mx-auto max-w-[1440px] scroll-mt-20 border-b border-line px-6 py-20 md:px-12 md:py-28">
+      <SectionHeader index="02" label="Experience" title="Where I work." />
 
       {experience.map((job) => (
         <Reveal key={job.company + job.period}>
-          <article className="grid grid-cols-1 gap-10 lg:grid-cols-12">
+          <article className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
             <div className="space-y-2 font-mono text-xs tracking-wider text-muted uppercase lg:col-span-3">
               <p data-ball-floor className="text-foreground">{job.period}</p>
               <p data-ball-floor>{job.location}</p>
@@ -39,8 +39,8 @@ export function Experience() {
             {job.metrics && (
               <div className="grid grid-cols-3 gap-4 self-start lg:col-span-3 lg:grid-cols-1">
                 {job.metrics.map((m) => (
-                  <div key={m.label} data-ball-floor className="rounded-xl border border-line bg-surface p-5">
-                    <p className="text-3xl font-medium tracking-tight md:text-4xl">{m.value}</p>
+                  <div key={m.label} data-ball-floor className="rounded-xl border border-line bg-surface p-4 md:p-5">
+                    <p className="text-2xl font-medium tracking-tight md:text-4xl">{m.value}</p>
                     <p className="mt-1 font-mono text-[10px] tracking-wider text-muted uppercase">{m.label}</p>
                   </div>
                 ))}

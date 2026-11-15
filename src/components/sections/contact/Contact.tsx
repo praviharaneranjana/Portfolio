@@ -6,14 +6,14 @@ import { LiveClock } from "./LiveClock";
 
 export function Contact() {
   return (
-    <section id="contact" className="mx-auto max-w-[1440px] scroll-mt-20 px-6 py-28 md:px-12">
+    <section id="contact" className="mx-auto max-w-[1440px] scroll-mt-20 px-6 py-20 md:px-12 md:py-28">
       <div className="grid grid-cols-1 gap-14 lg:grid-cols-12">
         <div className="space-y-8 lg:col-span-6">
           <Reveal>
             <p data-ball-floor className="label text-accent">06 // Contact</p>
           </Reveal>
           <h2 data-ball-floor className="text-5xl leading-[1.05] font-medium tracking-[-0.03em] md:text-7xl">
-            <MaskLines lines={[{ text: "Let's build", className: "text-muted" }, { text: "something remarkable." }]} />
+            <MaskLines lines={[{ text: "Hiring, or have", className: "text-muted" }, { text: "a project in mind?" }]} />
           </h2>
           <Reveal delay={0.2} className="max-w-md leading-relaxed font-light text-zinc-400">
             <p data-ball-floor>Open to Junior Software Engineer (.NET) roles, freelance projects and game-dev collaborations.</p>

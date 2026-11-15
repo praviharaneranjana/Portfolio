@@ -6,7 +6,7 @@ export const capabilities: Capability[] = [
     domain: "Backend & Data",
     title: "Enterprise .NET & backend systems",
     description:
-      "RESTful APIs, relational schema design and query optimisation for multi-tenant SaaS — built to stay fast as the data grows.",
+      "REST APIs, database design and query tuning for multi-tenant SaaS, so pages stay fast as the data grows.",
     items: ["C#, ASP.NET, SQL Server", "Laravel, FastAPI, Node.js", "MySQL, PostgreSQL, Redis", "RBAC & multi-tenancy"],
   },
   {
@@ -22,7 +22,7 @@ export const capabilities: Capability[] = [
     domain: "Applied AI",
     title: "AI-enabled, data-driven features",
     description:
-      "Generative AI inside real products and explainable ML models validated properly — calibrated, leakage-checked and benchmarked.",
+      "Generative AI features in real products, and ML models I can explain: calibrated, checked for leakage and benchmarked.",
     items: ["Gemini & GenAI APIs", "XGBoost, scikit-learn", "SHAP explainability", "pandas, NumPy"],
   },
   {
@@ -30,7 +30,7 @@ export const capabilities: Capability[] = [
     domain: "Real-Time & Games",
     title: "Mobile game design in Unity",
     description:
-      "A newer discipline I'm growing into: gameplay systems in C#, mobile performance budgets and the craft of game feel.",
+      "The newest one for me. I'm learning gameplay programming in C# and how to keep a game running smoothly on a phone.",
     items: ["Unity & C#", "Mobile game design", "Gameplay prototyping", "Performance profiling"],
   },
 ];

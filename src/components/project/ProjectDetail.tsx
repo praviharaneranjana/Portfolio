@@ -221,6 +221,27 @@ export function ProjectDetail({ project, number, next }: { project: CaseStudy; n
         )}
       </div>
 
+      {/* Closing call to action: the live product, after the visitor has seen every screen. */}
+      {link && (
+        <Reveal className="pb-8">
+          <a
+            href={link.href}
+            target="_blank"
+            rel="noreferrer"
+            className="group flex flex-col gap-6 border-y border-line py-12 transition-colors duration-500 hover:border-white/25 md:flex-row md:items-center md:justify-between md:py-16"
+          >
+            <div>
+              <p className="label text-accent">See it live</p>
+              <p className="mt-4 text-4xl font-medium tracking-tight transition-colors group-hover:text-accent md:text-6xl">{link.label}</p>
+              <p className="mt-3 text-muted md:text-lg">Opens {url ?? link.label} in a new tab.</p>
+            </div>
+            <span className="label inline-flex shrink-0 items-center gap-3 self-start rounded-full border border-line px-6 py-3.5 text-foreground transition-all duration-300 group-hover:bg-white group-hover:text-black md:self-auto">
+              Visit website <ArrowUpRight className="size-4 text-accent" />
+            </span>
+          </a>
+        </Reveal>
+      )}
+
       {next && next.slug !== project.slug && (
         <Reveal className="pb-24">
           <Link

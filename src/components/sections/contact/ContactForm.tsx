@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { sendContact, type ContactState } from "@/app/actions/contact";
 
 const field =
-  "w-full rounded-lg border border-line bg-background px-4 py-3 text-sm text-foreground placeholder-zinc-600 outline-none transition focus:border-accent";
+  "w-full rounded-lg border border-line bg-background px-4 py-3 text-base text-foreground md:text-sm placeholder-zinc-600 outline-none transition focus:border-accent";
 const labelCls = "mb-1.5 block font-mono text-[10px] tracking-wider text-muted uppercase";
 
 export function ContactForm() {
@@ -31,7 +31,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-lg bg-accent py-4 font-mono text-xs font-semibold tracking-[0.2em] text-white uppercase shadow-[0_0_30px_rgba(255,77,48,0.3)] transition hover:brightness-110 disabled:opacity-60"
+        className="w-full rounded-lg bg-accent py-4 font-mono text-xs font-semibold tracking-[0.2em] text-white uppercase shadow-[0_0_30px_rgba(255,77,48,0.3)] transition hover:brightness-110 active:scale-[0.99] disabled:opacity-60"
       >
         {pending ? "Sending…" : "Send message ↗"}
       </button>

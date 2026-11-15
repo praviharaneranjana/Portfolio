@@ -2,52 +2,6 @@ import type { Project } from "@/types/content";
 
 export const projects: Project[] = [
   {
-    slug: "shai",
-    title: "SHAI",
-    subtitle: "Smart Hospital AI Operations Platform — Final Year Project",
-    category: "ai",
-    status: "academic",
-    featured: true,
-    summary:
-      "A full-stack platform that predicts outpatient no-shows, explains every prediction, and turns risk into action: triage, overbooking and multilingual reminders.",
-    pipeline: ["HIS Sync", "40 Features", "XGBoost", "SHAP", "Triage"],
-    stack: ["Python", "FastAPI", "PostgreSQL", "XGBoost", "scikit-learn", "SHAP", "Gemini API", "Next.js", "TypeScript", "Docker", "GitHub Actions"],
-    metrics: [
-      { label: "ROC-AUC (CV)", value: "0.73" },
-      { label: "Appointments validated", value: "110k" },
-      { label: "Engineered features", value: "40" },
-    ],
-    highlights: [
-      "Predicts hospital outpatient no-shows with a calibrated XGBoost model and SHAP explanations.",
-      "FastAPI + PostgreSQL backend with multi-hospital tenancy, consumed by a Next.js dashboard; Docker + GitHub Actions CI/CD.",
-      "Role-based access, scrypt-hashed passwords, signed sessions, Alembic migrations and an HIS sync connector.",
-      "Risk triage, priority worklist and overbooking optimisation using exact Poisson-binomial calculations.",
-      "Gemini drafts patient reminders in English, Sinhala and Tamil with human review.",
-    ],
-  },
-  {
-    slug: "swymwise",
-    title: "SwymWise",
-    subtitle: "Swim Academy Management Mobile App",
-    category: "mobile",
-    status: "shipped",
-    featured: true,
-    summary:
-      "A multi-role platform for swim academies — training, live sessions, attendance, competitions and a social feed — on a serverless, multi-tenant backend.",
-    pipeline: ["Flutter", "Edge Fns ×39", "Postgres RLS", "FCM Queue", "Stripe"],
-    stack: ["Flutter", "Dart", "Riverpod", "Supabase", "PostgreSQL", "TypeScript", "Firebase", "Stripe"],
-    metrics: [
-      { label: "Edge Functions", value: "~39" },
-      { label: "Migrations", value: "~90" },
-      { label: "Feature modules", value: "24" },
-    ],
-    highlights: [
-      "Multi-role platform (swimmer, coach, admin): training, live sessions, attendance, competitions and a social feed.",
-      "Serverless backend on Supabase Edge Functions with row-level security and per-academy tenant isolation.",
-      "Push notifications via a DB-triggered queue, FCM and pg_cron retries; Stripe billing with idempotent webhooks.",
-    ],
-  },
-  {
     slug: "swymwise-web",
     title: "SwymWise Website",
     subtitle: "Marketing & help site for the SwymWise platform",
@@ -61,6 +15,7 @@ export const projects: Project[] = [
       "Static React 18 + Vite 6 site with no server of its own: every page is a lazy-loaded chunk, and the rest are preloaded quietly once the first page settles (skipped on Data Saver and 2G).",
       "Searchable user guides for swimmers, coaches and admins, built from JSON with matching PDFs, plus a generated sitemap and social-share tags.",
       "Only two network calls: an admin-session check that swaps the navbar to “Go to admin panel”, and a hosted checkout, so card details never touch the site.",
+      "A “Become a tester” sign-up for the Android beta that needs no server: it opens the visitor's mail app with a pre-filled email, then shows the Google Play link.",
       "Three.js water canvas and 3D medal, Framer Motion and Lottie, with light and dark themes.",
     ],
     links: [{ label: "swymwise.com", href: "https://swymwise.com/" }],
@@ -71,7 +26,7 @@ export const projects: Project[] = [
     ],
     screens: {
       desktop: [
-        { src: "/images/projects/swymwise-web/site/desktop-home.webp", label: "Home", alt: "SwymWise home page: “Run your swim academy from one app”, with the swimmer app on a phone." },
+        { src: "/images/projects/swymwise-web/site/desktop-home.webp", label: "Home", alt: "SwymWise home page: “Run your swim academy from one app”, with the “Become a tester” beta sign-up and the swimmer app on a phone." },
         { src: "/images/projects/swymwise-web/site/desktop-features.webp", label: "Features", alt: "Features page: “Built for everyone on the pool deck”, with feature lists for swimmers and coaches." },
         { src: "/images/projects/swymwise-web/site/desktop-swimmers.webp", label: "Swimmers", alt: "Swimmers page: “Every swim counts”, with the swimmer home screen on a phone." },
         { src: "/images/projects/swymwise-web/site/desktop-coaches.webp", label: "Coaches", alt: "Coaches page: “Run the deck from your phone”, with the coach home screen." },
@@ -83,7 +38,7 @@ export const projects: Project[] = [
         { src: "/images/projects/swymwise-web/site/desktop-support.webp", label: "Support", alt: "Support Center with frequently asked questions and a way to contact the support team." },
       ],
       mobile: [
-        { src: "/images/projects/swymwise-web/site/mobile-home.webp", label: "Home", alt: "SwymWise home page on a phone: “Run your swim academy from one app”, with the swimmer app on a phone." },
+        { src: "/images/projects/swymwise-web/site/mobile-home.webp", label: "Home", alt: "SwymWise home page on a phone: “Run your swim academy from one app”, with the “Become a tester” beta sign-up and the swimmer app on a phone." },
         { src: "/images/projects/swymwise-web/site/mobile-features.webp", label: "Features", alt: "Features page on a phone: “Built for everyone on the pool deck”, with feature lists for swimmers and coaches." },
         { src: "/images/projects/swymwise-web/site/mobile-swimmers.webp", label: "Swimmers", alt: "Swimmers page on a phone: “Every swim counts”, with the swimmer home screen on a phone." },
         { src: "/images/projects/swymwise-web/site/mobile-coaches.webp", label: "Coaches", alt: "Coaches page on a phone: “Run the deck from your phone”, with the coach home screen." },
@@ -218,14 +173,60 @@ export const projects: Project[] = [
     },
   },
   {
+    slug: "shai",
+    title: "SHAI",
+    subtitle: "Smart Hospital AI Operations Platform — Final Year Project",
+    category: "ai",
+    status: "academic",
+    featured: true,
+    summary:
+      "A full-stack platform that predicts outpatient no-shows, explains every prediction, and turns risk into action: triage, overbooking and multilingual reminders.",
+    pipeline: ["HIS Sync", "40 Features", "XGBoost", "SHAP", "Triage"],
+    stack: ["Python", "FastAPI", "PostgreSQL", "XGBoost", "scikit-learn", "SHAP", "Gemini API", "Next.js", "TypeScript", "Docker", "GitHub Actions"],
+    metrics: [
+      { label: "ROC-AUC (CV)", value: "0.73" },
+      { label: "Appointments validated", value: "110k" },
+      { label: "Engineered features", value: "40" },
+    ],
+    highlights: [
+      "Predicts hospital outpatient no-shows with a calibrated XGBoost model and SHAP explanations.",
+      "FastAPI + PostgreSQL backend with multi-hospital tenancy, consumed by a Next.js dashboard; Docker + GitHub Actions CI/CD.",
+      "Role-based access, scrypt-hashed passwords, signed sessions, Alembic migrations and an HIS sync connector.",
+      "Risk triage, priority worklist and overbooking optimisation using exact Poisson-binomial calculations.",
+      "Gemini drafts patient reminders in English, Sinhala and Tamil with human review.",
+    ],
+  },
+  {
+    slug: "swymwise",
+    title: "SwymWise",
+    subtitle: "Swim Academy Management Mobile App",
+    category: "mobile",
+    status: "shipped",
+    featured: true,
+    summary:
+      "A multi-role platform for swim academies — training, live sessions, attendance, competitions and a social feed — on a serverless, multi-tenant backend.",
+    pipeline: ["Flutter", "Edge Fns ×39", "Postgres RLS", "FCM Queue", "Stripe"],
+    stack: ["Flutter", "Dart", "Riverpod", "Supabase", "PostgreSQL", "TypeScript", "Firebase", "Stripe"],
+    metrics: [
+      { label: "Edge Functions", value: "~39" },
+      { label: "Migrations", value: "~90" },
+      { label: "Feature modules", value: "24" },
+    ],
+    highlights: [
+      "Multi-role platform (swimmer, coach, admin): training, live sessions, attendance, competitions and a social feed.",
+      "Serverless backend on Supabase Edge Functions with row-level security and per-academy tenant isolation.",
+      "Push notifications via a DB-triggered queue, FCM and pg_cron retries; Stripe billing with idempotent webhooks.",
+    ],
+  },
+  {
     slug: "unity-mobile-games",
     title: "Mobile Game Design",
-    subtitle: "Learning Unity — new mobile game prototypes",
+    subtitle: "Learning Unity, one prototype at a time",
     category: "game",
     status: "in-progress",
     featured: true,
     summary:
-      "My newest discipline: designing mobile games in Unity, bringing C# and production engineering habits to gameplay, performance and feel.",
+      "I've just started designing mobile games in Unity. Nothing to show yet; prototypes will go here as they come together.",
     pipeline: ["Input", "Gameplay Loop", "Physics", "URP", "Mobile Build"],
     stack: ["Unity", "C#", "Mobile"],
     highlights: [
