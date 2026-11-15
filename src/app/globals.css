@@ -10,7 +10,7 @@
   --secondary: #a8a8ae;
   --muted: #8b8c92;
   --line: rgb(255 255 255 / 0.08);
-  --accent: #ff4d30;
+  --accent: #c9a96e;
 }
 
 @theme inline {
@@ -51,7 +51,7 @@ body {
 
 ::selection {
   background: var(--accent);
-  color: #fff;
+  color: var(--background);
 }
 
 ::-webkit-scrollbar { width: 6px; }
@@ -150,12 +150,12 @@ body {
   .animate-spin-slow { animation: none; }
 }
 
-/* Syntax colours for the hero code cards: neutral steps plus the coral accent, so code never competes with it. */
-.tok-kw { color: #ff7a61; }
+/* Syntax colours for the hero code cards: neutral steps plus the champagne-gold accent, so code never competes with it. */
+.tok-kw { color: #c9a96e; }
 .tok-type { color: #e8e2d8; }
 .tok-fn { color: #ededee; }
 .tok-str { color: #b4bac3; }
-.tok-num { color: #ff9a85; }
+.tok-num { color: #e2cfa3; }
 .tok-com { color: #66686e; }
 
 /* Lenis smooth scroll */

@@ -162,7 +162,7 @@ function Vault({ controlRef, lowDetail, onReady }: Props) {
     <>
       <primitive object={scene} />
       {/* Warm light inside the vault, revealed as the doors part. */}
-      <pointLight ref={spill} position={[0, 0.4, -4]} color="#ffb59e" intensity={0} distance={18} decay={1.6} />
+      <pointLight ref={spill} position={[0, 0.4, -4]} color="#f2d9b0" intensity={0} distance={18} decay={1.6} />
     </>
   );
 }

@@ -3,7 +3,7 @@ import Image from "next/image";
 import type { Screenshot } from "@/types/content";
 import { cn } from "@/lib/utils";
 
-/** A quiet browser window: neutral dots and a URL pill, no colour so the accent stays coral. Children fill a 16:10 viewport. */
+/** A quiet browser window: neutral dots and a URL pill, no colour so the accent stays the only colour. Children fill a 16:10 viewport. */
 export function BrowserWindow({ url, className, children }: { url?: string; className?: string; children: ReactNode }) {
   return (
     <figure className={cn("overflow-hidden rounded-lg border border-white/12 bg-surface-elevated shadow-2xl shadow-black/60", className)}>

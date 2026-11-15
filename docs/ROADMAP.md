@@ -4,7 +4,7 @@
 
 - [x] Next.js 16 + TypeScript + Tailwind v4 scaffold
 - [x] Typed content layer filled from CV; config-driven sections
-- [x] Premium editorial redesign (obsidian / titanium / coral) from reference
+- [x] Premium editorial redesign (obsidian / titanium / coral, later champagne gold) from reference
 - [x] Real-time 3D hero sculpture: instanced beaded arches, physical materials, environment reflections, mouse-following key light, ripple, scroll response, film grain + vignette
 - [x] Floating editor cards with mouse parallax
 - [x] Name + portrait slot in hero, magnetic rotating badge, custom cursor, masked text reveals

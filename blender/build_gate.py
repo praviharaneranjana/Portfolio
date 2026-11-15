@@ -344,9 +344,9 @@ M = {
     "steel": make_material("Steel", "#a3a7ae", 1.0, 0.24, tex=metal, normal=0.2, tile=1.2),
     "bolt": make_material("BoltSteel", "#62666d", 1.0, 0.4, tex=metal, normal=0.2, tile=1.2),
     "tick": make_material("Tick", "#c9ccd2", 0.7, 0.32),
-    "paint": make_material("CoralPaint", "#d8432b", 0.0, 0.48),  # dial index mark only
+    "paint": make_material("AccentPaint", "#a88a52", 0.0, 0.48),  # dial index mark only
     # Shared by SeamGlow + StatusLight; the web code animates its emissive intensity on unlock.
-    "glow": make_material("Glow", "#ff4d30", 0.0, 0.4, emission="#ff4d30", strength=1.0),
+    "glow": make_material("Glow", "#c9a96e", 0.0, 0.4, emission="#c9a96e", strength=1.0),
 }
 
 # ----------------------------------------------------------------------------- wall: facade + pocket back wall
@@ -587,11 +587,11 @@ def add_light(name, kind, loc, energy, color=(1, 1, 1), size=None, rot=None):
     return ob
 
 
-# Mirrors the web lighting (GateCanvas.tsx): soft top key, cool side fill, faint coral rim, warm spill inside.
+# Mirrors the web lighting (GateCanvas.tsx): soft top key, cool side fill, faint champagne-gold rim, warm spill inside.
 add_light("Key", "AREA", (-3, -9, 8), 3000, size=7, rot=(math.radians(52), 0, math.radians(-20)))
 add_light("Fill", "AREA", (10, -8, 0.5), 700, color=(0.86, 0.9, 0.96), size=6, rot=(math.radians(85), 0, math.radians(52)))
-add_light("Rim", "AREA", (-11, -3, -2), 260, color=(1, 0.3, 0.19), size=4, rot=(math.radians(95), 0, math.radians(-75)))
-add_light("Spill", "POINT", (0, 4, 0), 400, color=(1, 0.55, 0.42))
+add_light("Rim", "AREA", (-11, -3, -2), 260, color=(0.79, 0.66, 0.43), size=4, rot=(math.radians(95), 0, math.radians(-75)))
+add_light("Spill", "POINT", (0, 4, 0), 400, color=(1, 0.85, 0.66))
 
 world = scene.world or bpy.data.worlds.new("World")
 scene.world = world

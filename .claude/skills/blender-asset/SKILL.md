@@ -11,7 +11,7 @@ Read `docs/BLENDER.md` first: node-name contract, realism checklist, material re
 
 - **The script is the source.** Edit `blender/build_gate.py` and re-run it. Never hand-edit `gate.glb`, and don't edit `gate.blend` without porting the change back into the script.
 - **Keep the contract.** `GateCanvas.tsx` animates nodes by name (`Dial`, `DoorL`, `DoorR`, `Pin_*`, `Bolt_0/1`, `SeamGlow`, material `Glow`). If you rename or move a pivot, update `GateCanvas.tsx` in the same change. `DOOR_TRAVEL` must match in both files.
-- **Realistic, not cartoon:** surface variation (roughness + normal maps), multi-segment bevels, depth (recesses, no floating parts), dark restrained palette with coral only as a tiny accent, no emissive UI decorations on the model.
+- **Realistic, not cartoon:** surface variation (roughness + normal maps), multi-segment bevels, depth (recesses, no floating parts), dark restrained palette with champagne gold only as a tiny accent, no emissive UI decorations on the model.
 - **Budget:** `.glb` ≤ ~1.5 MB (Draco + JPEG). Textures 1024² tileable, shared between materials.
 
 ## Run

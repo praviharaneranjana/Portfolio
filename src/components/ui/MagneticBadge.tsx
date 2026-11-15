@@ -13,7 +13,7 @@ const REACH = { wide: 150, narrow: 104 };
 const ease = [0.16, 1, 0.3, 1] as const;
 
 /**
- * Coral circular badge with rotating text that leans toward the cursor. Clicking it opens a menu: arms grow out of
+ * Champagne-gold circular badge with rotating text that leans toward the cursor. Clicking it opens a menu: arms grow out of
  * the badge to a column of links, on whichever side has more room.
  */
 export function MagneticBadge({ text, links }: { text: string; links: BadgeLink[] }) {
@@ -90,14 +90,14 @@ export function MagneticBadge({ text, links }: { text: string; links: BadgeLink[
           <defs>
             <path id="badge-circle" d="M 50,50 m -37,0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" />
           </defs>
-          <text className="fill-white font-mono text-[8.2px] font-medium tracking-[0.2em] uppercase">
+          <text className="fill-background font-mono text-[8.2px] font-medium tracking-[0.2em] uppercase">
             <textPath href="#badge-circle">{text.repeat(2)}</textPath>
           </text>
         </svg>
         {/* Plus that turns into a close cross. */}
         <motion.svg
           viewBox="0 0 24 24"
-          className="size-7 text-white"
+          className="size-7 text-background"
           fill="none"
           stroke="currentColor"
           strokeWidth={2}

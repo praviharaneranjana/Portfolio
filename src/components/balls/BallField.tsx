@@ -158,7 +158,7 @@ function fibonacciSphere(n: number) {
 
 /**
  * One beaded ball, built at unit radius; the parent scales it to pixels. Each ball has its own finish from
- * `siteConfig.balls.materials`, light enough to read on the dark page. The core can glow coral, and the beads can
+ * `siteConfig.balls.materials`, light enough to read on the dark page. The core can glow gold, and the beads can
  * spread apart to show it.
  */
 function BeadBall({
@@ -496,7 +496,7 @@ function Balls({ radius, beads }: { radius: number; beads: number }) {
         step(i, route, view, dt);
 
         if (f.mode === "charge") {
-          // Gather power: swell, squeeze down, tremble, and let the coral core show between the beads.
+          // Gather power: swell, squeeze down, tremble, and let the glowing core show between the beads.
           const k = Math.min(f.t / CHARGE, 1);
           b.vx = b.squashV = 0;
           f.grow = 1 + 0.18 * outCubic(k);
@@ -557,7 +557,7 @@ function Balls({ radius, beads }: { radius: number; beads: number }) {
 
         if (f.mode !== "charge" && f.mode !== "dash") stepSquash(b, dt);
 
-        // The coral glow cools off after a dash.
+        // The core glow fades after a dash.
         if ((f.mode === "roll" || f.mode === "bottom") && f.glow > 0) {
           f.glow = f.glow < 0.01 ? 0 : f.glow * Math.exp(-3.5 * dt);
           moved = true;
