@@ -54,8 +54,8 @@ export function Cursor() {
         animate={{
           width: hovering ? 64 : 38,
           height: hovering ? 64 : 38,
-          borderColor: hovering ? "rgba(138,180,255,0.9)" : "rgba(255,255,255,0.3)",
-          backgroundColor: hovering ? "rgba(138,180,255,0.1)" : "rgba(138,180,255,0)",
+          borderColor: hovering ? "rgba(201,169,110,0.9)" : "rgba(255,255,255,0.3)",
+          backgroundColor: hovering ? "rgba(201,169,110,0.1)" : "rgba(201,169,110,0)",
         }}
         transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
       />

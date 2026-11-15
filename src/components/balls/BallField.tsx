@@ -158,7 +158,7 @@ function fibonacciSphere(n: number) {
 
 /**
  * One beaded ball, built at unit radius; the parent scales it to pixels. Each ball has its own finish from
- * `siteConfig.balls.materials`, light enough to read on the dark page. The core can glow ice blue, and the beads can
+ * `siteConfig.balls.materials`, light enough to read on the dark page. The core can glow gold, and the beads can
  * spread apart to show it.
  */
 function BeadBall({

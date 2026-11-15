@@ -21,7 +21,7 @@ export const siteConfig = {
     /** Material of the beaded sculpture. */
     material: { color: "#1b1c1f", roughness: 0.42, metalness: 0.55, clearcoat: 0.35 },
     keyLight: "#ffffff",
-    rimLight: "#8ab4ff",
+    rimLight: "#c9a96e",
     /** Animated ripple along the beads. Disabled automatically for prefers-reduced-motion. */
     ripple: true,
   },
@@ -37,11 +37,11 @@ export const siteConfig = {
     radius: { desktop: 24, mobile: 14 },
     /**
      * One finish per ball (cycled if `count` is larger). Light enough to stand out on the near-black page:
-     * satin pearl, the ice-blue accent, and polished steel. `core` is the shadowed inside seen between the beads.
+     * satin pearl, champagne gold, and polished steel. `core` is the shadowed inside seen between the beads.
      */
     materials: [
       { color: "#ece6dc", core: "#4a4640", roughness: 0.3, metalness: 0.25, clearcoat: 0.7, envMapIntensity: 1.1 },
-      { color: "#86aef5", core: "#142240", roughness: 0.34, metalness: 0.15, clearcoat: 0.6, envMapIntensity: 0.9 },
+      { color: "#c9a96e", core: "#3a2f1c", roughness: 0.3, metalness: 0.55, clearcoat: 0.6, envMapIntensity: 0.9 },
       { color: "#c9ced6", core: "#33373d", roughness: 0.24, metalness: 0.55, clearcoat: 0.4, envMapIntensity: 1.3 },
     ],
   },

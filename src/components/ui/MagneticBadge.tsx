@@ -13,7 +13,7 @@ const REACH = { wide: 150, narrow: 104 };
 const ease = [0.16, 1, 0.3, 1] as const;
 
 /**
- * Ice-blue circular badge with rotating text that leans toward the cursor. Clicking it opens a menu: arms grow out of
+ * Champagne-gold circular badge with rotating text that leans toward the cursor. Clicking it opens a menu: arms grow out of
  * the badge to a column of links, on whichever side has more room.
  */
 export function MagneticBadge({ text, links }: { text: string; links: BadgeLink[] }) {

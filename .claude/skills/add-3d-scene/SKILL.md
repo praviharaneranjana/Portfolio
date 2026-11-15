@@ -19,7 +19,7 @@ Read `docs/3D.md` first. For the gate model itself (geometry, textures, Blender)
 ## Ground rules
 
 - Everything importing three.js is `"use client"` and reached only through a `next/dynamic(..., { ssr: false })` wrapper (`HeroScene`, `IntroGate`, `RollingBalls`). Add objects to an existing canvas before adding a new one.
-- Look must stay premium and realistic: physical materials, environment reflections, restrained colour (ice blue only as a rim accent). No cartoon/low-poly styling, toy vehicles, joysticks or game HUDs.
+- Look must stay premium and realistic: physical materials, environment reflections, restrained colour (champagne gold only as a rim accent). No cartoon/low-poly styling, toy vehicles, joysticks or game HUDs.
 - Keep the frame budget: one instanced draw call for repeated geometry, light post effects, respect `reducedMotion`/`lowDetail`. Prefer `frameloop="demand"` for canvases that are usually still.
 - Animate in `useFrame` (or a rAF loop + `invalidate()`) by mutating refs; never `setState` per frame. React Compiler lint: name ref props `xxxRef`, and keep lazily built scene data in a ref, not `useMemo`, if you mutate it per frame.
 - Use colours from `siteConfig.scene` so the theme stays in sync.
